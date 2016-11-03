@@ -1,0 +1,4 @@
+NumPy>=1.10.0
+SciPy>=0.13.0
+matplotlib>=1.2
+h5py
