@@ -1,3 +1,11 @@
+# pycharm
+.idea
+
+# bayespy build
+/result_images/
+
+# vscode
+.vscode/
 
 *~
 *#
