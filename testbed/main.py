@@ -1,7 +1,5 @@
 # add bayespy dir
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
+import init_utils
 
 import numpy as np
 import matplotlib.pyplot as plt
