@@ -176,7 +176,7 @@ class MainApplication(object):
         # hien thi ten vao bottom
         self.current_tool_label.config(
             text='Tool: %s' % self.tool_name[index])
-        # self.bind_mouse()
+        self.bind_mouse()
 
     # def create_node_tool(self, state):
     #     # print('Create_node_tool')
@@ -234,17 +234,24 @@ class MainApplication(object):
             self.current_item = None
             self.draw_choosen()
 
+    count = 0
+
     def hand_tool(self, state):
+        print('Hand tool' + str(self.count))
+        self.count += 1
         if state == 0:
+            self.canvas.bind("<B1-Motion>", self.drag_item_update_x_y)
+
+        if state == 0 or state == 1:
             self.selecting_item = None
             cur = self.get_current_node()
             if cur:
                 self.selecting_item = cur
                 self.canvas.move(
                     "current", self.end_x - self.start_x, self.end_y - self.start_y)
-                self.canvas.bind("<B1-Motion>", self.drag_item_update_x_y)
                 self.draw_choosen()
         if state == 2:
+            # self.canvas.unbind("<B1-Motion>")
             # move arc
             if self.selecting_item:
                 arcs = self.model.get_arcs_attach_node(self.selecting_item)
@@ -263,7 +270,7 @@ class MainApplication(object):
     def drag_item_update_x_y(self, event):
         self.start_x, self.start_y = self.end_x, self.end_y
         self.end_x, self.end_y = event.x, event.y
-        self.hand_tool(0)
+        self.hand_tool(1)
 
     def get_node_pos(self, node_id):
         coords = self.canvas.coords(node_id)
