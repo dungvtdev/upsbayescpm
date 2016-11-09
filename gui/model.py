@@ -89,13 +89,13 @@ class Model(object):
         end = self.get_node(arc.end_id)
         if start and end:
             end_es = end.get_bayes_node('es')
-            start_ef = end.get_bayes_node('ef')
+            start_ef = start.get_bayes_node('ef')
             end_es.add_successors(start_ef, bayes.nfact.Constant(value=1))
             end_es.set_weight([1, 1])
             start_lf = start.get_bayes_node('lf')
-            end_ls = start.get_bayes_node('ls')
+            end_ls = end.get_bayes_node('ls')
             start_lf.add_successors(end_ls, bayes.nfact.Constant(value=1))
-            startlf.set_weight([1, -1])
+            start_lf.set_weight([1, -1])
 
     def create_action(self, node):
         loc = node.data['normal'][0]

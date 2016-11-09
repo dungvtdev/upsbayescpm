@@ -198,6 +198,7 @@ class EquationNode(Node):
         for i in range(n):
             sum = 0
             for j in range(n_succ):
+                # sum += succ_samples[j][i]
                 sum += self.weight_map[j] * succ_samples[j][i]
             samples[i] = sum
         return samples
