@@ -1,29 +1,62 @@
 class Model(object):
-    activities = []
+    nodes = []
+    arcs = []
 
-    def add_activity(self, activity):
-        if activity not in self.activities:
-            self.activities.add(activity)
+    def add_node(self, node):
+        if node not in self.nodes:
+            self.nodes.append(node)
+
+    def add_arc(self, arc):
+        if arc not in self.arcs:
+            self.arcs.append(arc)
+
+    def remove_node(self, node):
+        if isinstance(node, NodeModel):
+            self.nodes.remove(node)
+        else:
+            id = node
+            node = self.get_node(id)
+            if node:
+                self.nodes.remove(node)
+
+    def remove_arc(self, arc):
+        if isinstance(arc, ArcModel):
+            self.arcs.remove(arc)
+        else:
+            id = arc
+            arc = self.get_arc(id)
+            if arc:
+                self.arcs.remove(arc)
+
+    def get_arc(self, id):
+        return next((a for a in self.arcs if a.arc_id == id), None)
+
+    def get_node(self, id):
+        return next((n for n in self.nodes if n.node_id == id), None)
+
+    def is_node(self, id):
+        nd = self.get_node(id)
+        return True if nd else False
+
+    def get_arcs_attach_node(self, node_id):
+        arcs = [a for a in self.arcs if (
+            a.start_id == node_id or a.end_id == node_id)]
+        if arcs and len(arcs):
+            return arcs
 
 
-class NodeView(object):
+class NodeModel(object):
     name = ''
-    canvas_items = []
-    successors = []
-    predecessors = []
+    node_id = None
+    text_id = None
 
     def __init__(self, name):
         self.name = name
 
-    def add_successors(self, *argv):
-        if argv:
-            sucs = argv
-            for suc in sucs:
-                if suc not in self.successors:
-                    self.successors.append(suc)
-                    if self not in suc.predecessors:
-                        suc.predecessors.append(self)
 
-
-class ActivityView(NodeView):
-    pass
+class ArcModel(object):
+    start_id = None
+    end_id = None
+    arc_id = None
+    start_pos = None
+    end_pos = None

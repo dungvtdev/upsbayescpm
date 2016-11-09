@@ -1,4 +1,5 @@
 from tkinter import *
+import math
 
 """Load icon image"""
 
@@ -40,10 +41,14 @@ def draw_checkered(canvas, line_distance, fill=None):
 
 
 def calc_decorate_arrow(start, end, radius):
-    vec = {'x': (end[0] - start[0]), 'y': (end[1] - start[1])}
-    dist = math.sqrt(vec.x * vec.x + vec.y * vec.y)
-    vec = {'x': vec.x / dist, 'y': vec.y / dist}
-    start = (start.x + vec.x * radius, start.y + vec.y * radius)
-    dist = dist - radius
-    end = (start.x + vec.x * dist, start.y + vec.y * dist)
+    vec_x = end[0] - start[0]
+    vec_y = end[1] - start[1]
+    dist = math.sqrt(vec_x * vec_x + vec_y * vec_y)
+    if dist < radius:
+        return (start, end)
+    vec_x = vec_x / dist
+    vec_y = vec_y / dist
+    start = ((start[0] + vec_x * radius), (start[1] + vec_y * radius))
+    dist = dist - 2*radius
+    end = ((start[0] + vec_x * dist), (start[1] + vec_y * dist))
     return (start, end)

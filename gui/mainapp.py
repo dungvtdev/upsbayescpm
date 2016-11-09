@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter.messagebox
 import math
+from . model import *
 
 from . import utils
 from . import model
@@ -75,11 +76,12 @@ class MainApplication(object):
     def create_top_bar(self):
         self.top_bar = Frame(self.master, height=25, relief="raised")
         self.tool_functions = (
-            'hand_tool', 'create_node_tool', 'create_activity_tool', 'create_arc_tool', 'delete_tool')
-        self.tool_name = ('No Tool', 'Create Node',
+            'hand_tool',
+            'create_activity_tool', 'create_arc_tool', 'delete_tool')
+        self.tool_name = ('No Tool',
                           'Create Activity', 'Create Arc', 'Delete')
         ic = utils.icon
-        icons = (ic.hand_icon, ic.node_icon, ic.activity_icon,
+        icons = (ic.hand_icon, ic.activity_icon,
                  ic.line_icon, ic.delete_icon)
         self.selected_tool_function = self.tool_functions[0]
         for index, name in enumerate(self.tool_functions):
@@ -169,33 +171,41 @@ class MainApplication(object):
             text='Tool: %s' % self.tool_name[index])
         # self.bind_mouse()
 
-    def create_node_tool(self, state):
-        # print('Create_node_tool')
-        if state == 0:
-            if self.canvas.find_withtag("current"):
-                self.selecting_item = self.canvas.find_withtag("current")
-                self.draw_choosen()
-                # return
-            else:
-                w = self.node_half_size[0]
-                h = self.node_half_size[1]
-                self.current_item = self.canvas.create_oval(
-                    self.end_x - w, self.end_y - h, self.end_x + w, self.end_y + h,
-                    outline=self.outline, fill=self.node_fill, width=self.border_width)
-        if state == 1:
-            pass
+    # def create_node_tool(self, state):
+    #     # print('Create_node_tool')
+    #     if state == 0:
+    #         if self.canvas.find_withtag("current"):
+    #             self.selecting_item = self.canvas.find_withtag("current")
+    #             self.draw_choosen()
+    #             # return
+    #         else:
+    #             w = self.node_half_size[0]
+    #             h = self.node_half_size[1]
+    #             self.current_item = self.canvas.create_oval(
+    #                 self.end_x - w, self.end_y - h, self.end_x + w, self.end_y + h,
+    #                 outline=self.outline, fill=self.node_fill, width=self.border_width)
+    #     if state == 1:
+    #         pass
 
-        if state == 2:
-            # apply change
-            self.selecting_item = self.current_item
-            self.current_item = None
-            self.draw_choosen()
+    #     if state == 2:
+    #         # apply change
+    #         self.selecting_item = self.current_item
+    #         self.current_item = None
+    #         self.draw_choosen()
+
+    def get_current_node(self):
+        cur = self.canvas.find_withtag("current")
+        if cur:
+            if self.model.is_node(cur[0]):
+                return cur[0]
 
     def create_activity_tool(self, state):
         # print('Create_node_tool')
         if state == 0:
-            if self.canvas.find_withtag("current"):
-                self.selecting_item = self.canvas.find_withtag("current")
+            cur = self.get_current_node()
+            print('create activity cur %s' % str(cur))
+            if cur:
+                self.selecting_item = cur
                 self.draw_choosen()
                 # return
             else:
@@ -209,25 +219,50 @@ class MainApplication(object):
 
         if state == 2:
             # apply change
+            node = NodeModel('test')
+            node.node_id = self.current_item
+            self.model.add_node(node)
+
             self.selecting_item = self.current_item
             self.current_item = None
             self.draw_choosen()
 
     def hand_tool(self, state):
         if state == 0:
-            self.selecting_item = self.canvas.find_withtag("current")
-            self.canvas.move(
-                "current", self.end_x - self.start_x, self.end_y - self.start_y)
-            self.canvas.bind("<B1-Motion>", self.drag_item_update_x_y)
-            self.draw_choosen()
+            cur = self.get_current_node()
+            if cur:
+                self.selecting_item = cur
+                self.canvas.move(
+                    "current", self.end_x - self.start_x, self.end_y - self.start_y)
+                self.canvas.bind("<B1-Motion>", self.drag_item_update_x_y)
+                self.draw_choosen()
+        if state == 2:
+            # move arc
+            if self.selecting_item:
+                arcs = self.model.get_arcs_attach_node(self.selecting_item)
+                item = self.selecting_item
+                for a in arcs:
+                    start = self.get_node_pos(a.start_id)
+                    end = self.get_node_pos(a.end_id)
+                    self.canvas.delete(a.arc_id)
+                    a_id, start, end = self.draw_arrow(
+                        start, end, self.node_half_size[0])
+                    a.arc_id = a_id
+                    a.start_pos = start
+                    a.end_pos = end
 
     def drag_item_update_x_y(self, event):
         self.start_x, self.start_y = self.end_x, self.end_y
         self.end_x, self.end_y = event.x, event.y
         self.hand_tool(0)
 
+    def get_node_pos(self, node_id):
+        coords = self.canvas.coords(node_id)
+        pos = ((coords[0] + coords[2]) / 2, (coords[1] + coords[3]) / 2)
+        return pos
+
     def delete_tool(self, state):
-        current = self.canvas.find_withtag("current")
+        current = self.get_current_node()
         if not current:
             return
         if state == 0:
@@ -236,34 +271,60 @@ class MainApplication(object):
             if tkinter.messagebox.askokcancel("Delete?", "Really delete?"):
                 self.canvas.delete(current)
                 self.canvas.delete(self.choose_view)
+                # delete model
+                self.model.remove_node(current)
+                arcs = self.model.get_arcs_attach_node(current)
+                if arcs:
+                    for a in arcs:
+                        self.canvas.delete(a.arc_id)
+                        self.model.remove_arc(a)
 
     def create_arc_tool(self, state):
+        # print("Draw arc")
         if state == 0:
-            if self.canvas.find_withtag("current"):
-                self.selecting_item = self.canvas.find_withtag("current")
+            cur = self.get_current_node()
+            if cur:
+                self.selecting_item = cur
                 self.draw_choosen()
 
         if state == 1 and self.selecting_item:
             self.canvas.delete(self.current_item)
-            self.current_item = self.canvas.create_line(
-                self.start_x, self.start_y, self.end_x, self.end_y, fill=self.line_fill,
-                width=self.line_width, arrow="last")
+            # self.current_item = self.canvas.create_line(
+            #     self.start_x, self.start_y, self.end_x, self.end_y, fill=self.line_fill,
+            #     width=self.line_width, arrow="last")
+            # self.current_item = self.canvas.create_line(
+            # self.start_x, self.start_y, self.end_x, self.end_y,
+            # fill=self.line_fill, width=self.line_width, arrow="last")
+            self.current_item, _, _ = self.draw_arrow((self.start_x, self.start_y),
+                                                      (self.end_x, self.end_y), self.node_half_size[0])
 
         if state == 2 and self.selecting_item:
-            cur = self.canvas.find_withtag("current")
-            if cur == self.current_item:
-                cur = self.canvas.find_below(cur)
+            cur = self.get_current_node()
+            # if cur == self.current_item:
+            #     cur = self.canvas.find_below(cur)
             self.canvas.delete(self.current_item)
             self.current_item = None
-            print(cur)
-            print(self.selecting_item)
+            # print(cur)
+            # print(self.selecting_item)
             if cur and cur != self.selecting_item:
                 # apply
                 start = self.canvas.coords(self.selecting_item)
+                start = ((start[0] + start[2]) / 2, (start[1] + start[3]) / 2)
                 end = self.canvas.coords(cur)
-                print('start, end %s, %s' % (str(start), str(end)))
-                self.draw_arrow(start, end, self.node_half_size[0])
+                end = ((end[0] + end[2]) / 2, (end[1] + end[3]) / 2)
 
+                # print('start, end %s, %s' % (str(start), str(end)))
+                # self.draw_arrow(start, end, self.node_half_size[0])
+                radius = self.node_half_size[0]
+                line_item, start, end = self.draw_arrow(
+                    start, end, self.node_half_size[0])
+                arc = ArcModel()
+                arc.start_id = self.selecting_item
+                arc.end_id = cur
+                arc.start_pos = start
+                arc.end_pos = end
+                arc.arc_id = line_item
+                self.model.add_arc(arc)
     """ Mouse """
 
     def bind_mouse(self):
@@ -296,6 +357,7 @@ class MainApplication(object):
 
     def draw_choosen(self):
         item = self.selecting_item
+        # print('Select %d' % item)
         if not item:
             return
         coords = self.canvas.coords(item)
@@ -308,5 +370,6 @@ class MainApplication(object):
     def draw_arrow(self, start, end, radius):
         start, end = utils.calc_decorate_arrow(start, end, radius)
         # print('start, e %s %s' %(str(start), str(end)))
-        self.canvas.create_line(
+        line_item = self.canvas.create_line(
             start[0], start[1], end[0], end[1], fill=self.line_fill, width=self.line_width, arrow="last")
+        return line_item, start, end
