@@ -23,6 +23,12 @@ def set_network(name):
     _name = name
 
 
+def remove_network(name):
+    if name in _network.keys():
+        # raise ValueError('Name %s chua define, k xoa duoc' % name)
+        del _network[name]
+
+
 def _get_network():
     return _network[_name]
 

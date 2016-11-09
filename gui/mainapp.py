@@ -152,7 +152,13 @@ class MainApplication(object):
         pass
 
     def run(self):
-        print('run')
+        # print('run')
+        success = self.model.build_network()
+        if success:
+            print('update')
+            self.model.run()
+        else:
+            print('graph khong hop le')
 
     """ Actions"""
 
@@ -243,15 +249,16 @@ class MainApplication(object):
             if self.selecting_item:
                 arcs = self.model.get_arcs_attach_node(self.selecting_item)
                 item = self.selecting_item
-                for a in arcs:
-                    start = self.get_node_pos(a.start_id)
-                    end = self.get_node_pos(a.end_id)
-                    self.canvas.delete(a.arc_id)
-                    a_id, start, end = self.draw_arrow(
-                        start, end, self.node_half_size[0])
-                    a.arc_id = a_id
-                    a.start_pos = start
-                    a.end_pos = end
+                if arcs:
+                    for a in arcs:
+                        start = self.get_node_pos(a.start_id)
+                        end = self.get_node_pos(a.end_id)
+                        self.canvas.delete(a.arc_id)
+                        a_id, start, end = self.draw_arrow(
+                            start, end, self.node_half_size[0])
+                        a.arc_id = a_id
+                        a.start_pos = start
+                        a.end_pos = end
 
     def drag_item_update_x_y(self, event):
         self.start_x, self.start_y = self.end_x, self.end_y
@@ -328,9 +335,11 @@ class MainApplication(object):
                 arc.arc_id = line_item
                 self.model.add_arc(arc)
 
-    def wd_activity_callback(self, is_ok, dict):
+    def wd_activity_callback(self, is_ok, node, dict):
         if is_ok:
             print(dict)
+            if node:
+                node.data = dict
 
     """ Mouse """
 
@@ -366,8 +375,10 @@ class MainApplication(object):
         cur = self.get_current_node()
         if cur:
             self.selecting_item = cur
+            cur_node = self.model.get_node(cur)
             self.draw_choosen()
-            utils.show_window(self.master, Wd_Activity, self.wd_activity_callback)
+            utils.show_window(self.master, Wd_Activity,
+                              cur_node, self.wd_activity_callback)
 
     """ Draw """
 
@@ -389,5 +400,3 @@ class MainApplication(object):
         line_item = self.canvas.create_line(
             start[0], start[1], end[0], end[1], fill=self.line_fill, width=self.line_width, arrow="last")
         return line_item, start, end
-
-

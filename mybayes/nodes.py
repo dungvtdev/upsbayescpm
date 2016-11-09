@@ -165,13 +165,16 @@ class EquationNode(Node):
         self.weight_map = []
         if argv:
             self.add_successors(*argv)
+            self.weight_map = [1] * len(argv)
 
     def set_weight(self, weights):
         if not weights:
             n = len(self.successors) - len(self.weight_map)
             weights = [1] * n
-        for w in weights:
-            self.weight_map.append(w)
+        else:
+            self.weight_map = []
+            for w in weights:
+                self.weight_map.append(w)
 
     # def add_successors(self, nodes):
     #     super(EquationNode, self).add_successors(nodes)
@@ -195,7 +198,7 @@ class EquationNode(Node):
         for i in range(n):
             sum = 0
             for j in range(n_succ):
-                sum += succ_samples[j][i]
+                sum += self.weight_map[j] * succ_samples[j][i]
             samples[i] = sum
         return samples
 
