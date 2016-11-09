@@ -49,6 +49,14 @@ def calc_decorate_arrow(start, end, radius):
     vec_x = vec_x / dist
     vec_y = vec_y / dist
     start = ((start[0] + vec_x * radius), (start[1] + vec_y * radius))
-    dist = dist - 2*radius
+    dist = dist - 2 * radius
     end = ((start[0] + vec_x * dist), (start[1] + vec_y * dist))
     return (start, end)
+
+    """ Other window"""
+
+
+def show_window(master, window, *argv):
+    newWindow = Toplevel(master)
+    app = window(newWindow, *argv)
+    return newWindow, app

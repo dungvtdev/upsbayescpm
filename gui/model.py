@@ -44,11 +44,14 @@ class Model(object):
         if arcs and len(arcs):
             return arcs
 
+    def build_network(self):
+
 
 class NodeModel(object):
     name = ''
     node_id = None
     text_id = None
+    histogram_nodes = ()
 
     def __init__(self, name):
         self.name = name

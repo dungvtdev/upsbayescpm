@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter.messagebox
 import math
 from . model import *
+from . wd_activity import Wd_Activity
 
 from . import utils
 from . import model
@@ -151,7 +152,7 @@ class MainApplication(object):
         pass
 
     def run(self):
-        pass
+        print('run')
 
     """ Actions"""
 
@@ -229,6 +230,7 @@ class MainApplication(object):
 
     def hand_tool(self, state):
         if state == 0:
+            self.selecting_item = None
             cur = self.get_current_node()
             if cur:
                 self.selecting_item = cur
@@ -325,6 +327,11 @@ class MainApplication(object):
                 arc.end_pos = end
                 arc.arc_id = line_item
                 self.model.add_arc(arc)
+
+    def wd_activity_callback(self, is_ok, dict):
+        if is_ok:
+            print(dict)
+
     """ Mouse """
 
     def bind_mouse(self):
@@ -334,6 +341,7 @@ class MainApplication(object):
         self.canvas.bind(
             "<Button1-ButtonRelease>", self.on_mouse_button_released)
         # self.canvas.bind("<Motion>", self.on_mouse_unpressed_motion)
+        self.canvas.bind("<Double-Button-1>", self.on_mouse_button_dbclick)
 
     def on_mouse_button_pressed(self, event):
         self.start_x = self.end_x = self.canvas.canvasx(event.x)
@@ -352,6 +360,14 @@ class MainApplication(object):
 
     # def on_mouse_unpressed_motion(self, event):
     #     self.show_current_coordinates(event)
+
+    def on_mouse_button_dbclick(self, event):
+        print('Double click')
+        cur = self.get_current_node()
+        if cur:
+            self.selecting_item = cur
+            self.draw_choosen()
+            utils.show_window(self.master, Wd_Activity, self.wd_activity_callback)
 
     """ Draw """
 
@@ -373,3 +389,5 @@ class MainApplication(object):
         line_item = self.canvas.create_line(
             start[0], start[1], end[0], end[1], fill=self.line_fill, width=self.line_width, arrow="last")
         return line_item, start, end
+
+
