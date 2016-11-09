@@ -42,7 +42,8 @@ class _NodeFactory(object):
     names = {'Gaussian': nd.GaussianNode,
              'Triangular': nd.TriangularNode,
              'Constant': nd.ConstantNode,
-             'Equation': nd.EquationNode, }
+             'Equation': nd.EquationNode,
+             'MaxAddValue': nd.MaxAddValueNode}
 
     def __getattr__(self, name):
         m_node = self.names.get(name, None)

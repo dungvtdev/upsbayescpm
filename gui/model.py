@@ -71,12 +71,14 @@ class Model(object):
                 ef = node.get_bayes_node('ef')
                 lf = node.get_bayes_node('lf')
                 lf.add_successors(ef)
-                lf.set_weight([1, ])
+                lf.set_add_value(0)
+                # lf.set_weight([1, ])
             for start_node_id in start_set:
                 node = self.get_node(start_node_id)
                 es = node.get_bayes_node('es')
                 es.add_successors(bayes.nfact.Constant(value=0))
-                es.set_weight([1, ])
+                es.set_add_value(0)
+                # es.set_weight([1, ])
             return True
         else:
             return False
@@ -90,21 +92,21 @@ class Model(object):
         if start and end:
             end_es = end.get_bayes_node('es')
             start_ef = start.get_bayes_node('ef')
-            end_es.add_successors(start_ef, bayes.nfact.Constant(value=1))
-            end_es.set_weight([1, 1])
+            end_es.add_successors(start_ef)  # , bayes.nfact.Constant(value=1))
+            # end_es.set_weight([1, 1])
             start_lf = start.get_bayes_node('lf')
             end_ls = end.get_bayes_node('ls')
-            start_lf.add_successors(end_ls, bayes.nfact.Constant(value=1))
-            start_lf.set_weight([1, -1])
+            start_lf.add_successors(end_ls)  # , bayes.nfact.Constant(value=1))
+            # start_lf.set_weight([1, -1])
 
     def create_action(self, node):
         loc = node.data['normal'][0]
         scale = node.data['normal'][1]
 
-        es = bayes.nfact.Equation()  # 5
+        es = bayes.nfact.MaxAddValue(add_value=1)  # 5
         duration = bayes.nfact.Gaussian(loc=loc, scale=scale)  # 7
         ef = bayes.nfact.Equation(es, duration)  # 8
-        lf = bayes.nfact.Equation()  # 9
+        lf = bayes.nfact.MaxAddValue(add_value=-1)  # 9
         ls = bayes.nfact.Equation(lf, duration)  # 10
         ls.set_weight([1, -1])
 

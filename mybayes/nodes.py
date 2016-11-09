@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
 _cache = None
 
@@ -156,6 +157,42 @@ class ConstantNode(Node):
             number = self.NumberOfSample
         s = [self.value] * number
         return s
+
+
+class MaxAddValueNode(Node):
+
+    def __init__(self, *argv, **kargv):
+        super(MaxAddValueNode, self).__init__(**kargv)
+        self.add_value = kargv.get('add_value', 0)
+        if argv:
+            self.add_successors(*argv)
+
+    def set_add_value(self, value):
+        self.add_value = value
+
+    def get_samples(self, number=None):
+        if not self.successors:
+            return []
+
+        n = self.NumberOfSample
+        # if not number:
+        #     n = self.NumberOfSample
+        # else:
+        #     n = number
+        # TODO sua truong hop ConstantNode de toi uu, k can sinh ra 1 mang
+        # sample nua
+        succ_samples = [s.get_samples_cache() for s in self.successors]
+
+        samples = [0] * n
+        n_succ = len(succ_samples)
+        for i in range(n):
+            max_v = succ_samples[0][i]
+            for j in range(n_succ):
+                # sum += succ_samples[j][i]
+                value = succ_samples[j][i]
+                max_v = value if value > max_v else max_v
+            samples[i] = max_v + self.add_value
+        return samples
 
 
 class EquationNode(Node):
