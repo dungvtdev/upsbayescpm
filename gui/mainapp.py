@@ -140,7 +140,7 @@ class MainApplication(object):
 
     def exit_editor(self):
         if tkinter.messagebox.askokcancel("Quit?", "Really quit?"):
-            root.destroy()
+            self.master.destroy()
 
     def new_node(self):
         pass

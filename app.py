@@ -4,6 +4,7 @@ from gui import utils
 from mybayes import *
 from mybayes.cache import Cache
 
+from gui.duration.wd_duration import *
 
 def main():
     set_cache(Cache())
@@ -14,4 +15,8 @@ def main():
     root.mainloop()
 
 if __name__ == '__main__':
-    main()
+    # main()
+    # test
+    root = Tk()
+    app = WdDuration(root, None)
+    root.mainloop()

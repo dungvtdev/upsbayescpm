@@ -1,6 +1,6 @@
 import tkinter as tk
-import mybayes as bayes
-
+# import mybayes as bayes
+import matplotlib.pyplot as plt
 
 class Wd_Activity(object):
 

@@ -243,3 +243,5 @@ class EquationNode(Node):
     # def get_histogram(self, samples=None, bins=None):
     #     samples = settings.NumberOfSample if not samples else samples
     #     bins = self.NumberOfBins if not bins else bins
+
+
