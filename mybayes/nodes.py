@@ -2,7 +2,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import math
+from . import settings
+
+# import math
 
 _cache = None
 
@@ -55,8 +57,6 @@ class Node(CacheMixin):
     """ Node
     " Cache: self.histogram, self.samples
     """
-    NumberOfSample = 10000
-    NumberOfBins = 30
 
     def __init__(self, *argv, **kargv):
         self.id = _get_id()
@@ -80,7 +80,7 @@ class Node(CacheMixin):
         if not cached or recalc:
             g_samples = self.get_samples()
             # print(g_samples)
-            h = plt.hist(g_samples, bins=self.NumberOfBins, normed=True)
+            h = plt.hist(g_samples, bins=settings.NumberOfBins, normed=True)
             self.cache.histogram = h
             return h
         else:
@@ -98,7 +98,7 @@ class Node(CacheMixin):
         plt.show()
 
     def get_samples_iter(self, number=None):
-        n = number if number else self.NumberOfSample
+        n = number if number else settings.NumberOfSample
         i = 0
         while i < n:
             yield self.get_samples(1)[0]
@@ -108,7 +108,7 @@ class Node(CacheMixin):
         cached, cache_samples = self.cache.samples
         if not cached:
             print('Calc samples of node %s' % str(self.id))
-            n = self.NumberOfSample
+            n = settings.NumberOfSample
             cache_samples = self.get_samples(n)
             self.cache.samples = cache_samples
         else:
@@ -129,7 +129,7 @@ class TriangularNode(Node):
 
     def get_samples(self, number=None):
         if not number:
-            number = self.NumberOfSample
+            number = settings.NumberOfSample
         return np.random.triangular(self.left, self.mode, self.right, number)
 
 
@@ -142,7 +142,7 @@ class GaussianNode(Node):
 
     def get_samples(self, number=None):
         if not number:
-            number = self.NumberOfSample
+            number = settings.NumberOfSample
         return np.random.normal(loc=self.loc, scale=self.scale, size=number)
 
 
@@ -154,7 +154,7 @@ class ConstantNode(Node):
 
     def get_samples(self, number=None):
         if not number:
-            number = self.NumberOfSample
+            number = settings.NumberOfSample
         s = [self.value] * number
         return s
 
@@ -174,9 +174,9 @@ class MaxAddValueNode(Node):
         if not self.successors:
             return []
 
-        n = self.NumberOfSample
+        n = settings.NumberOfSample
         # if not number:
-        #     n = self.NumberOfSample
+        #     n = settings.NumberOfSample
         # else:
         #     n = number
         # TODO sua truong hop ConstantNode de toi uu, k can sinh ra 1 mang
@@ -221,9 +221,9 @@ class EquationNode(Node):
         if not self.successors:
             return []
 
-        n = self.NumberOfSample
+        n = settings.NumberOfSample
         # if not number:
-        #     n = self.NumberOfSample
+        #     n = settings.NumberOfSample
         # else:
         #     n = number
         # TODO sua truong hop ConstantNode de toi uu, k can sinh ra 1 mang
@@ -241,5 +241,5 @@ class EquationNode(Node):
         return samples
 
     # def get_histogram(self, samples=None, bins=None):
-    #     samples = self.NumberOfSample if not samples else samples
+    #     samples = settings.NumberOfSample if not samples else samples
     #     bins = self.NumberOfBins if not bins else bins
