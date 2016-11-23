@@ -3,7 +3,7 @@ from gui.utils.gui_component import ToggleGroup
 
 class WdDuration(object):
 
-    def __init__(self, master, duration_node):
+    def __init__(self, master, duration_node, callback):
         self.master = master
         self.duration_node = duration_node
 

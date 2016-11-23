@@ -14,7 +14,7 @@ class Model(object):
             self.arcs.append(arc)
 
     def remove_node(self, node):
-        if isinstance(node, NodeModel):
+        if isinstance(node, ActivityNodeModel):
             self.nodes.remove(node)
         else:
             id = node
@@ -113,13 +113,13 @@ class Model(object):
         node.bayes_nodes = (es, ef, ls, lf, duration)
 
 
-class NodeModel(object):
+class ActivityNodeModel(object):
     name = ''
     node_id = None
     text_id = None
     # (es, ef, ls, lf, duration)
     bayes_nodes = ()
-    data = {'normal': (5, 1)}
+    duration_model = None
 
     def __init__(self, name):
         self.name = name
@@ -138,3 +138,65 @@ class ArcModel(object):
     arc_id = None
     start_pos = None
     end_pos = None
+
+
+class DurationNodeModel(object):
+    # self.control = None     # Cpd
+    # self.impact = None      # Value
+    # self.risk_event = None   # Cpd
+    # self.resource = None    # Value
+    nodes_name =('control', 'impact', 'risk_event', 'resource')
+
+    def __init__(self):
+        self.nodes = [None]*len(self.nodes_name)
+
+    def get_node_index_by_name(self, name):
+        return next((i for i in range(len(self.nodes_name)) if self.nodes[i] == name))
+
+    def set_node(self, name, node):
+        index = self.get_node_index_by_name(name)
+        self.nodes[index] = node
+
+    def get_node(self, name):
+        index = self.get_node_index_by_name(name)
+        return self.nodes[index]
+
+
+class LabeledNodeModel(object):
+    def __init__(self, name, node_id):
+        self.name = name
+        self.node_id = node_id
+        self.labels = []
+
+    def set_label(self, labels):
+        self.labels = labels
+
+
+class NodeValueModel(LabeledNodeModel):
+    def __init__(self, name, node_id):
+        super(NodeValueModel, self).__init__(name, node_id)
+        self.values = []
+
+    def set_value(self, values):
+        self.values = values
+
+
+class NodeCpdModel(LabeledNodeModel):
+
+    def __init__(self, name, node_id):
+        super(NodeCpdModel, self).__init__(name, node_id)
+        self.npt = []
+        self.likely_hood = []
+        self.evidences = []
+
+    def set_npt(self, npt):
+        self.npt = npt
+
+    def set_likely_hood(self, likely_hood):
+        self.likely_hood = likely_hood
+
+    def set_evidences(self, evidences):
+        self.evidences = evidences
+
+
+

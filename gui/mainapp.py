@@ -4,8 +4,23 @@ import math
 from . model import *
 from . wd_activity import Wd_Activity
 
-from . import utils
+from .utils import utils
 from . import model
+
+windows = {}
+
+
+def destroy_window(name):
+    wnd = windows.get(name, None)
+    if wnd:
+        wnd.destroy()
+        del windows[name]
+
+
+def open_window(name, master, window_class, *argv):
+    destroy_window(name)
+    wnd, _ = utils.show_window(master, window_class, *argv)
+    windows[name] = wnd
 
 
 class MainApplication(object):
@@ -226,7 +241,7 @@ class MainApplication(object):
 
         if state == 2:
             # apply change
-            node = NodeModel('test')
+            node = ActivityNodeModel('test')
             node.node_id = self.current_item
             self.model.add_node(node)
 
@@ -343,10 +358,7 @@ class MainApplication(object):
                 self.model.add_arc(arc)
 
     def wd_activity_callback(self, is_ok, node, dict):
-        if is_ok:
-            print(dict)
-            if node:
-                node.data = dict
+        del windows['activity']
 
     """ Mouse """
 
@@ -384,8 +396,9 @@ class MainApplication(object):
             self.selecting_item = cur
             cur_node = self.model.get_node(cur)
             self.draw_choosen()
-            utils.show_window(self.master, Wd_Activity,
-                              cur_node, self.wd_activity_callback)
+
+            wnd_name = 'activity'
+            open_window(wnd_name, self.master, Wd_Activity, cur_node, self.wd_activity_callback)
 
     """ Draw """
 

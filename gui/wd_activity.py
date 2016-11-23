@@ -1,6 +1,9 @@
 import tkinter as tk
 # import mybayes as bayes
 import matplotlib.pyplot as plt
+from .utils import utils
+from . import mainapp
+from .duration.wd_duration import WdDuration
 
 class Wd_Activity(object):
 
@@ -11,16 +14,8 @@ class Wd_Activity(object):
         self.frame = tk.Frame(self.master)
         top_frame = tk.Frame(self.frame)
         top_frame.pack(side='top', fill=tk.X)
-        # Loc
-        tk.Label(top_frame, text='Loc').pack(side=tk.LEFT)
-        self.loc = tk.StringVar()
-        tk.Entry(top_frame, textvariable=self.loc).pack(side=tk.LEFT)
-        self.loc.set(self.node.data['normal'][0])
-        # Scale
-        tk.Label(top_frame, text='Scale').pack(side=tk.LEFT)
-        self.scale = tk.StringVar()
-        tk.Entry(top_frame, textvariable=self.scale).pack(side=tk.LEFT)
-        self.scale.set(self.node.data['normal'][1])
+        btn_open_duration = tk.Button(top_frame, text="Open Duration", command=self.open_duration_model)
+        btn_open_duration.pack()
 
         bottom_frame = tk.Frame(self.frame)
         bottom_frame.pack(
@@ -50,6 +45,14 @@ class Wd_Activity(object):
         cancel_b.grid(row=1, column=4, sticky='e')
 
         self.frame.pack()
+
+    def open_duration_model(self):
+        wnd_name = 'duration'
+        mainapp.open_window(wnd_name, self.master, WdDuration, self.node, self.open_duration_callback)
+
+    def open_duration_callback(self):
+        del mainapp.windows['duration']
+
 
     def show_histogram(self, name_hist):
         print('Show Hist %s' % name_hist)

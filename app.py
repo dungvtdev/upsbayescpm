@@ -1,6 +1,6 @@
 from tkinter import *
 from gui.mainapp import *
-from gui import utils
+from gui.utils import utils
 from mybayes import *
 from mybayes.cache import Cache
 
@@ -15,8 +15,9 @@ def main():
     root.mainloop()
 
 if __name__ == '__main__':
-    # main()
+    main()
     # test
-    root = Tk()
-    app = WdDuration(root, None)
-    root.mainloop()
+    # root = Tk()
+    # root.config()
+    # app = WdDuration(root, None)
+    # root.mainloop()

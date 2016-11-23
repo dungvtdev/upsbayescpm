@@ -57,6 +57,7 @@ def calc_decorate_arrow(start, end, radius):
 
 
 def show_window(master, window, *argv):
+    print(argv)
     newWindow = Toplevel(master)
     app = window(newWindow, *argv)
     return newWindow, app
