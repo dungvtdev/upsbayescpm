@@ -1,9 +1,10 @@
 import tkinter as tk
-# import mybayes as bayes
+
 import matplotlib.pyplot as plt
-from .utils import utils
+
+from gui.wd_duration import WdDuration
 from . import mainapp
-from .duration.wd_duration import WdDuration
+
 
 class Wd_Activity(object):
 
@@ -48,7 +49,7 @@ class Wd_Activity(object):
 
     def open_duration_model(self):
         wnd_name = 'duration'
-        mainapp.open_window(wnd_name, self.master, WdDuration, self.node, self.open_duration_callback)
+        mainapp.open_window(wnd_name, self.master, WdDuration, self.node.duration_model, self.open_duration_callback)
 
     def open_duration_callback(self):
         del mainapp.windows['duration']

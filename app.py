@@ -1,10 +1,8 @@
-from tkinter import *
 from gui.mainapp import *
 from gui.utils import utils
 from mybayes import *
 from mybayes.cache import Cache
 
-from gui.duration.wd_duration import *
 
 def main():
     set_cache(Cache())
