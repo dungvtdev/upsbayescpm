@@ -5,6 +5,10 @@ class Model(object):
     nodes = []
     arcs = []
 
+    def replace_node(self, node, new_node):
+        self.remove_node(node)
+        self.add_node(new_node)
+
     def add_node(self, node):
         if node not in self.nodes:
             self.nodes.append(node)
@@ -123,7 +127,7 @@ class ActivityNodeModel(object):
 
     def __init__(self, name):
         self.name = name
-        self.duration_model = DurationNodeModel()
+        self.duration_model = DurationNodeModel(name)
 
     def get_bayes_node(self, name):
         m = ('es', 'ef', 'ls', 'lf', 'duration')
@@ -131,6 +135,9 @@ class ActivityNodeModel(object):
             if v == name:
                 break
         return self.bayes_nodes[i]
+
+    def replace_duration(self, new_duration):
+        self.duration_model = new_duration
 
 
 class ArcModel(object):
@@ -142,14 +149,31 @@ class ArcModel(object):
 
 
 class DurationNodeModel(object):
-    # self.control = None     # Cpd
-    # self.impact = None      # Value
-    # self.risk_event = None   # Cpd
-    # self.resource = None    # Value
-    nodes_name =('control', 'impact', 'risk_event', 'response')
+    element_names_label=('Knowned Risks',)
+    element_names = ('knowned_risk',)
 
-    def __init__(self):
-        self.nodes = [NodeCpdModel(), NodeValueModel(), NodeCpdModel(), NodeValueModel()]
+    def __init__(self, activity_name):
+        self.activity_name = activity_name
+
+        self.elements = [None]*len(self.element_names)
+
+        # create knowned risk
+        knowned_risk = KnownedRiskModel(activity_name)
+        self.elements[0] = knowned_risk
+
+    def get_element_label_index(self, name):
+        return next(i for i in range(len(self.element_names_label)) if name == self.element_names_label[i])
+
+    def get_element(self, index):
+        return self.elements[index]
+
+
+class DurationElement(object):
+    def __init__(self, activity_name):
+        self.nodes_name_label = []
+        self.nodes_name=[]
+        self.nodes = []
+        self.activity_name = activity_name
 
     def get_node_index_by_name(self, name):
         return next((i for i in range(len(self.nodes_name)) if self.nodes_name[i] == name))
@@ -162,6 +186,29 @@ class DurationNodeModel(object):
         index = self.get_node_index_by_name(name)
         return self.nodes[index]
 
+    def get_node_by_id(self, id):
+        return self.nodes[id]
+
+
+class KnownedRiskModel(DurationElement):
+    # self.control = None     # Cpd
+    # self.impact = None      # Value
+    # self.risk_event = None   # Cpd
+    # self.resource = None    # Value
+    def __init__(self, activity_name):
+        super(KnownedRiskModel, self).__init__(activity_name)
+        self.nodes_name_label=('Control', 'Impact', 'Risk Event', 'Response')
+        self.nodes_name =('control', 'impact', 'risk_event', 'response')
+        self.nodes = [None] * len(self.nodes_name)
+        for i in range(len(self.nodes_name)):
+            n_name = "%s-%s" %(self.activity_name, self.nodes_name[i])
+            self.nodes[i]= NodeCpdModel(n_name)
+
+        # link control va risk_event
+        control = self.get_node('control')
+        risk_event = self.get_node('risk_event')
+        risk_event.evidences = [control,]
+
 
 class LabeledNodeModel(object):
     def __init__(self, name, node_id=-1):
@@ -173,40 +220,12 @@ class LabeledNodeModel(object):
         self.labels = [x for x in labels if x]
 
 
-class NodeValueModel(LabeledNodeModel):
-    def __init__(self, name='', node_id=-1):
-        super(NodeValueModel, self).__init__(name, node_id)
-        self.values = []
-
-    def set_value(self, values):
-        self.values = values
-
-    def get_table_labels(self):
-        return ['Prob',]
-
-    def set_data(self, data):
-        self.values = data
-
-    def get_data(self):
-        return self.values
-
-
 class NodeCpdModel(LabeledNodeModel):
 
-    def __init__(self, name='', node_id=-1):
+    def __init__(self, name, node_id=-1):
         super(NodeCpdModel, self).__init__(name, node_id)
-        self.npt = []
-        self.likely_hood = []
-        self.evidences = []     # nodeCpcModel
-
-    def set_npt(self, npt):
-        self.npt = npt
-
-    def set_likely_hood(self, likely_hood):
-        self.likely_hood = likely_hood
-
-    def set_evidences(self, evidences):
-        self.evidences = evidences
+        self.evidences = []     # nodeCpdModel
+        self.data = []
 
     def get_table_labels(self):
         if self.evidences:
@@ -215,17 +234,6 @@ class NodeCpdModel(LabeledNodeModel):
         else:
             return ['Prob',]
 
-    def set_data(self, data):
-        if self.evidences:
-            self.likely_hood = data
-        else:
-            self.npt = data
-
-    def get_data(self):
-        if self.evidences:
-            return self.likely_hood
-        else:
-            return self.npt
 
 
 

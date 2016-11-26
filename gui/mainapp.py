@@ -3,6 +3,7 @@ import tkinter.messagebox
 import math
 from . model import *
 from . wd_activity import Wd_Activity
+from . import form_activity
 
 from .utils import utils
 from . import model
@@ -17,10 +18,14 @@ def destroy_window(name):
         del windows[name]
 
 
-def open_window(name, master, window_class, *argv):
+def open_window(name, toplevel):
     destroy_window(name)
-    wnd, _ = utils.show_window(master, window_class, *argv)
-    windows[name] = wnd
+    windows[name] = toplevel
+
+# def open_window(name, master, window_class, *argv):
+#     destroy_window(name)
+#     wnd, _ = utils.show_window(master, window_class, *argv)
+#     windows[name] = wnd
 
 
 class MainApplication(object):
@@ -193,28 +198,6 @@ class MainApplication(object):
             text='Tool: %s' % self.tool_name[index])
         self.bind_mouse()
 
-    # def create_node_tool(self, state):
-    #     # print('Create_node_tool')
-    #     if state == 0:
-    #         if self.canvas.find_withtag("current"):
-    #             self.selecting_item = self.canvas.find_withtag("current")
-    #             self.draw_choosen()
-    #             # return
-    #         else:
-    #             w = self.node_half_size[0]
-    #             h = self.node_half_size[1]
-    #             self.current_item = self.canvas.create_oval(
-    #                 self.end_x - w, self.end_y - h, self.end_x + w, self.end_y + h,
-    #                 outline=self.outline, fill=self.node_fill, width=self.border_width)
-    #     if state == 1:
-    #         pass
-
-    #     if state == 2:
-    #         # apply change
-    #         self.selecting_item = self.current_item
-    #         self.current_item = None
-    #         self.draw_choosen()
-
     def get_current_node(self):
         cur = self.canvas.find_withtag("current")
         if cur:
@@ -240,14 +223,35 @@ class MainApplication(object):
             pass
 
         if state == 2:
+            if not self.current_item:
+                return
             # apply change
-            node = ActivityNodeModel('test')
+            node = ActivityNodeModel('NewNode')
             node.node_id = self.current_item
+            # draw text
+            coords = self.canvas.coords(node.node_id)
+            posx = (coords[0] + coords[2]) / 2
+            posy = coords[1] - 10
+            node.text_id = self.canvas.create_text(posx, posy, text=node.name)
+
             self.model.add_node(node)
 
             self.selecting_item = self.current_item
             self.current_item = None
             self.draw_choosen()
+
+    def position_node_ui(self, delta_posx, delta_posy, node_model=None):
+        coords = self.canvas.coords(node_model.node_id)
+
+        self.canvas.move(node_model.node_id, delta_posx, delta_posy)
+        self.canvas.move(node_model.text_id, delta_posx, delta_posy)
+
+    def delete_node_ui(self, node_model):
+        self.canvas.delete(node_model.node_id)
+        self.canvas.delete(node_model.text_id)
+
+    def update_node_ui(self, node_model):
+        self.canvas.itemconfig(node_model.text_id, text=node_model.name)
 
     count = 0
 
@@ -262,8 +266,9 @@ class MainApplication(object):
             cur = self.get_current_node()
             if cur:
                 self.selecting_item = cur
-                self.canvas.move(
-                    "current", self.end_x - self.start_x, self.end_y - self.start_y)
+                # self.canvas.move(
+                #     "current", self.end_x - self.start_x, self.end_y - self.start_y)
+                self.position_node_ui(self.end_x-self.start_x, self.end_y - self.start_y, self.model.get_node(cur))
                 self.draw_choosen()
         if state == 2:
             # self.canvas.unbind("<B1-Motion>")
@@ -300,10 +305,11 @@ class MainApplication(object):
             self.selecting_item = current
             self.draw_choosen()
             if tkinter.messagebox.askokcancel("Delete?", "Really delete?"):
-                self.canvas.delete(current)
+                # self.canvas.delete(current)
+                self.delete_node_ui(current)
                 self.canvas.delete(self.choose_view)
                 # delete model
-                self.model.remove_node(current)
+                self.model.remove_node(self.model.get_node(current))
                 arcs = self.model.get_arcs_attach_node(current)
                 if arcs:
                     for a in arcs:
@@ -357,8 +363,11 @@ class MainApplication(object):
                 arc.arc_id = line_item
                 self.model.add_arc(arc)
 
-    def wd_activity_callback(self, is_ok, node, dict):
-        del windows['activity']
+    def wd_activity_callback(self, node, new_node):
+        destroy_window('activity')
+        if new_node:
+            self.model.replace_node(node, new_node)
+            self.update_node_ui(new_node)
 
     """ Mouse """
 
@@ -398,7 +407,10 @@ class MainApplication(object):
             self.draw_choosen()
 
             wnd_name = 'activity'
-            open_window(wnd_name, self.master, Wd_Activity, cur_node, self.wd_activity_callback)
+            top, _ = form_activity.create_Activity(self.master, activity_node=cur_node,
+                                                   callback=self.wd_activity_callback)
+            open_window(wnd_name, top)
+            # open_window(wnd_name, self.master, Wd_Activity, cur_node, self.wd_activity_callback)
 
     """ Draw """
 
@@ -411,7 +423,7 @@ class MainApplication(object):
         if hasattr(self, 'choose_view'):
             self.canvas.delete(self.choose_view)
         self.choose_view = self.canvas.create_oval(
-            coords[0] - 10, coords[1] - 10, coords[2] + 10, coords[3] + 10,
+            coords[0], coords[1], coords[2], coords[3],
             outline=self.choosen_outline, fill=None, width=self.border_width * 2)
 
     def draw_arrow(self, start, end, radius):
