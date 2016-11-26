@@ -38,9 +38,6 @@ def create_Activity(root, *args, **kwargs):
     top = Activity(w)
     activity_support.init(w, top, *args, **kwargs)
 
-    activity_support.parents = (root, w)
-    activity_support.form = top
-
     return (w, top)
 
 def destroy_Activity():
@@ -50,6 +47,10 @@ def destroy_Activity():
 
 
 class Activity:
+    orig_activity_node = None
+    activity_node = None
+    callback_function = None
+
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''

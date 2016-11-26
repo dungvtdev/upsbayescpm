@@ -24,8 +24,6 @@ except ImportError:
 
 """ Model
 """
-parents = None
-form = None
 
 orig_activity_node = None
 activity_node = None
@@ -47,26 +45,25 @@ def set_Tk_var():
 def cmd_cancel():
     print('activity_support.cmd_cancel')
     sys.stdout.flush()
-    callback_function(orig_activity_node, None)
+    w.callback_function(w.orig_activity_node, None)
 
 def cmd_help():
     print('activity_support.cmd_help')
     sys.stdout.flush()
 
 def cmd_ok():
-    global var_msg_log, callback_function, orig_activity_node, activity_node
     print('activity_support.cmd_ok')
     sys.stdout.flush()
-    activity_node.name = txt_name.get()
-    callback_function(orig_activity_node, activity_node)
+    w.activity_node.name = txt_name.get()
+    w.callback_function(w.orig_activity_node, w.activity_node)
 
 
 def cmd_open_duration():
     print('activity_support.cmd_open_duration')
     sys.stdout.flush()
-    top, _ = form_duration.create_Duration_Model(parents[0],
-                                                 duration_model=activity_node.duration_model,
-                                                 callback=on_duration_form_callback)
+    top, _ = form_duration.create_Duration_Model(top_level,
+                                                 duration_model=w.activity_node.duration_model,
+                                                 callback=w.on_duration_form_callback)
     mainapp.open_window('duration',top)
 
 def cmd_plot():
@@ -74,17 +71,17 @@ def cmd_plot():
     sys.stdout.flush()
 
 def init(top, gui, *args, **kwargs):
-    global w, top_level, root, orig_activity_node, activity_node, callback_function, txt_name
+    global w, top_level, root, txt_name
     w = gui
     top_level = top
     root = top
 
-    orig_activity_node = kwargs['activity_node']
-    activity_node = deepcopy(orig_activity_node)
-    callback_function = kwargs['callback']
+    w.orig_activity_node = kwargs['activity_node']
+    w.activity_node = deepcopy(w.orig_activity_node)
+    w.callback_function = kwargs['callback']
 
     # init
-    txt_name.set(activity_node.name)
+    txt_name.set(w.activity_node.name)
 
 def destroy_window():
     # Function which closes the window.
@@ -96,7 +93,7 @@ def destroy_window():
 def on_duration_form_callback(duration_model, new_duration_model):
     mainapp.destroy_window('duration')
     if new_duration_model:
-        activity_node.replace_duration(new_duration_model)
+        w.activity_node.replace_duration(new_duration_model)
 
 
 if __name__ == '__main__':
