@@ -25,10 +25,6 @@ except ImportError:
 """ Model
 """
 
-orig_activity_node = None
-activity_node = None
-callback_function = None
-
 def set_Tk_var():
     # These are Tk variables used passed to Tkinter and must be
     # defined before the widgets using them are created.
