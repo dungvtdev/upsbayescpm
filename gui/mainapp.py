@@ -2,8 +2,8 @@ from tkinter import *
 import tkinter.messagebox
 import math
 from . model import *
-from . wd_activity import Wd_Activity
 from . import form_activity
+from . import form_risks
 
 from .utils import utils
 from . import model
@@ -72,17 +72,12 @@ class MainApplication(object):
             label='Exit', accelerator='Alt+F4', command=self.exit_editor)
         menu_bar.add_cascade(label='File', menu=file_menu)
 
-        """ Nodes menu"""
-        nodes_menu = Menu(menu_bar, tearoff=0)
+        """ Risks """
+        risks_menu = Menu(menu_bar, tearoff=0)
+        risks_menu.add_command(label='Open Risks Windows', compound='left',
+                             underline=0, command=self.open_risks_window)
 
-        nodes_menu.add_command(
-            label='Node', compound='left', underline=0, command=self.new_node)
-        # nodes_menu.add_command(
-        # label='Duration', compound='left', underline=0,
-        # command=self.new_duration)
-        nodes_menu.add_command(
-            label='Activity', compound='left', underline=0, command=self.new_activity)
-        menu_bar.add_cascade(label='Nodes', menu=nodes_menu)
+        menu_bar.add_cascade(label='Risks', menu=risks_menu)
 
         """ Run menu """
         run_menu = Menu(menu_bar, tearoff=0)
@@ -179,6 +174,15 @@ class MainApplication(object):
             self.model.run()
         else:
             print('graph khong hop le')
+
+    def open_risks_window(self):
+        wnd_name = 'risks'
+        top, _ = form_risks.create_Risks(self.master, model=self.model, callback=self.form_risks_callback)
+        open_window(wnd_name, top)
+
+    def form_risks_callback(self):
+        destroy_window('risks')
+
 
     """ Actions"""
 

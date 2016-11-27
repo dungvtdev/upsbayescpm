@@ -199,10 +199,12 @@ class KnownedRiskModel(DurationElement):
         super(KnownedRiskModel, self).__init__(activity_name)
         self.nodes_name_label=('Control', 'Impact', 'Risk Event', 'Response')
         self.nodes_name =('control', 'impact', 'risk_event', 'response')
+        flags = (True, True, False, True)
+
         self.nodes = [None] * len(self.nodes_name)
         for i in range(len(self.nodes_name)):
             n_name = "%s-%s" %(self.activity_name, self.nodes_name[i])
-            self.nodes[i]= NodeCpdModel(n_name)
+            self.nodes[i]= NodeCpdModel(n_name, can_choice=flags[i])
 
         # link control va risk_event
         control = self.get_node('control')
@@ -221,11 +223,14 @@ class LabeledNodeModel(object):
 
 
 class NodeCpdModel(LabeledNodeModel):
+    MANUAL = -1
 
-    def __init__(self, name, node_id=-1):
+    def __init__(self, name, can_choice=False, node_id=-1):
         super(NodeCpdModel, self).__init__(name, node_id)
         self.evidences = []     # nodeCpdModel
         self.data = []
+        self.choice_index = self.MANUAL
+        self.can_pre_choice=can_choice
 
     def get_table_labels(self):
         if self.evidences:
@@ -233,6 +238,19 @@ class NodeCpdModel(LabeledNodeModel):
             return self.evidences[0].labels
         else:
             return ['Prob',]
+
+    def dump_data(self):
+        return {'model':'NodeCpdModel',
+                'name':self.name,
+                'labels':self.labels,
+                'evidences':self.evidences,
+                'data':self.data,
+                'choice_index':self.choice_index
+                }
+
+    def read_data(self, json_data):
+        self.name=json_data['name']
+
 
 
 

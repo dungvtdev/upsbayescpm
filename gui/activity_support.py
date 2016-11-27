@@ -59,7 +59,7 @@ def cmd_open_duration():
     sys.stdout.flush()
     top, _ = form_duration.create_Duration_Model(top_level,
                                                  duration_model=w.activity_node.duration_model,
-                                                 callback=w.on_duration_form_callback)
+                                                 callback=on_duration_form_callback)
     mainapp.open_window('duration',top)
 
 def cmd_plot():
