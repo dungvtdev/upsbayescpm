@@ -40,7 +40,7 @@ class TableInput(object):
                 entry.grid(row=r+1, column=c+1)
                 self.items[r][c] = entry
                 entry.delete(0, "end")
-                if self.data:
+                if self.data and len(self.data) > r and len(self.data[0]) > c:
                     entry.insert(0, self.data[r][c])
 
 

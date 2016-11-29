@@ -75,9 +75,10 @@ class Duration_Model:
         self.style.map('.',background=
             [('selected', self._compcolor), ('active',self._ana2color)])
 
-        top.geometry("787x409+315+85")
+        top.geometry("928x453+0+270")
         top.title("Duration Model")
 
+        # side navigators
 
         self.lst_nodes = Listbox(top)
         self.lst_nodes.place(relx=0.08, rely=0.15, relheight=0.5, relwidth=0.18)
@@ -100,59 +101,6 @@ class Duration_Model:
         self.lst_risks.configure(takefocus="cmd_lst_risks_focus")
         self.lst_risks.bind(" <<ComboboxSelected>>", duration_support.on_lst_risks_select)
 
-        self.style.configure('TNotebook.Tab', background=self._bgcolor)
-        self.style.configure('TNotebook.Tab', foreground=self._fgcolor)
-        self.style.map('TNotebook.Tab', background=
-            [('selected', self._compcolor), ('active',self._ana2color)])
-        self.TNotebook1 = ttk.Notebook(top)
-        self.TNotebook1.place(relx=0.29, rely=0.07, relheight=0.81
-                , relwidth=0.69)
-        self.TNotebook1.configure(width=542)
-        self.TNotebook1.configure(takefocus="cmd_data_focus")
-        self.TNotebook1_pg0 = ttk.Frame(self.TNotebook1)
-        self.TNotebook1.add(self.TNotebook1_pg0, padding=3)
-        self.TNotebook1.tab(0, text="Choices",underline="-1",)
-        self.TNotebook1_pg1 = ttk.Frame(self.TNotebook1)
-        self.TNotebook1.add(self.TNotebook1_pg1, padding=3)
-        self.TNotebook1.tab(1, text="Choices Table",underline="-1",)
-
-        self.Label3 = Label(self.TNotebook1_pg0)
-        self.Label3.place(relx=0.04, rely=0.03, height=18, width=87)
-        self.Label3.configure(text='''Enter Choices''')
-
-        self.txt_labels = Text(self.TNotebook1_pg0)
-        self.txt_labels.place(relx=0.04, rely=0.1, relheight=0.78, relwidth=0.94)
-        self.txt_labels.configure(background="white")
-        self.txt_labels.configure(font="TkTextFont")
-        self.txt_labels.configure(selectbackground="#c4c4c4")
-        self.txt_labels.configure(width=506)
-        self.txt_labels.configure(wrap=WORD)
-
-        self.btn_choices_apply = Button(self.TNotebook1_pg0)
-        self.btn_choices_apply.place(relx=0.83, rely=0.9, height=26, width=77)
-        self.btn_choices_apply.configure(activebackground="#d9d9d9")
-        self.btn_choices_apply.configure(command=duration_support.cmd_choices_apply)
-        self.btn_choices_apply.configure(text='''Apply''')
-        self.btn_choices_apply.configure(width=77)
-
-        self.Label4 = Label(self.TNotebook1_pg1)
-        self.Label4.place(relx=0.04, rely=0.03, height=18, width=68)
-        self.Label4.configure(text='''Enter data''')
-
-        self.frm_data = Frame(self.TNotebook1_pg1)
-        self.frm_data.place(relx=0.04, rely=0.1, relheight=0.79, relwidth=0.94)
-        self.frm_data.configure(relief=GROOVE)
-        self.frm_data.configure(borderwidth="2")
-        self.frm_data.configure(relief=GROOVE)
-        self.frm_data.configure(width=505)
-
-        self.btn_data_apply = Button(self.TNotebook1_pg1)
-        self.btn_data_apply.place(relx=0.83, rely=0.9, height=26, width=77)
-        self.btn_data_apply.configure(activebackground="#d9d9d9")
-        self.btn_data_apply.configure(command=duration_support.cmd_data_apply)
-        self.btn_data_apply.configure(text='''Apply''')
-        self.btn_data_apply.configure(width=77)
-
         self.Label1 = Label(top)
         self.Label1.place(relx=0.01, rely=0.07, height=18, width=34)
         self.Label1.configure(text='''Risks''')
@@ -161,42 +109,119 @@ class Duration_Model:
         self.Label2.place(relx=0.01, rely=0.15, height=18, width=44)
         self.Label2.configure(text='''Nodes''')
 
+        # bottom buttons
+
         self.btn_cancel = Button(top)
-        self.btn_cancel.place(relx=0.9, rely=0.92, height=26, width=67)
+        self.btn_cancel.place(relx=0.92, rely=0.93, height=26, width=67)
         self.btn_cancel.configure(activebackground="#d9d9d9")
         self.btn_cancel.configure(command=duration_support.cmd_quit)
         self.btn_cancel.configure(text='''Cancel''')
 
-        self.btn_apply = Button(top)
-        self.btn_apply.place(relx=0.8, rely=0.92, height=26, width=67)
-        self.btn_apply.configure(activebackground="#d9d9d9")
-        self.btn_apply.configure(command=duration_support.cmd_apply)
-        self.btn_apply.configure(text='''Apply''')
-
         self.btn_ok = Button(top)
-        self.btn_ok.place(relx=0.71, rely=0.92, height=26, width=67)
+        self.btn_ok.place(relx=0.83, rely=0.93, height=26, width=67)
         self.btn_ok.configure(activebackground="#d9d9d9")
         self.btn_ok.configure(command=duration_support.cmd_ok)
         self.btn_ok.configure(text='''OK''')
 
         self.btn_help = Button(top)
-        self.btn_help.place(relx=0.01, rely=0.92, height=26, width=67)
+        self.btn_help.place(relx=0.01, rely=0.93, height=26, width=67)
         self.btn_help.configure(activebackground="#d9d9d9")
         self.btn_help.configure(command=duration_support.cmd_help)
         self.btn_help.configure(text='''Help''')
 
         self.msg_notif = Message(top)
-        self.msg_notif.place(relx=0.11, rely=0.93, relheight=0.05, relwidth=0.58)
-
+        self.msg_notif.place(relx=0.1, rely=0.84, relheight=0.04, relwidth=0.49)
         self.msg_notif.configure(foreground="#eb0018")
-        self.msg_notif.configure(text='''Message''')
-        self.msg_notif.configure(textvariable=duration_support.var_notif)
+        # self.msg_notif.configure(textvariable=duration_support.var_notif)
         self.msg_notif.configure(width=453)
 
+        # frame content
+        self.lb_type = Label(top)
+        self.lb_type.place(relx=0.26, rely=0.07, height=18, width=536)
+        self.lb_type.configure(anchor=NW)
+        self.lb_type.configure(justify=LEFT)
+        self.lb_type.configure(text='''Type: adlfad''')
+        self.lb_type.configure(width=536)
+
+        # CPD
+        self.frm_cpd_content = Frame(top)
+        self.frm_cpd_content.place(relx=0.25, rely=0.13, relheight=0.78
+                                   , relwidth=0.74)
+        self.frm_cpd_content.configure(relief=GROOVE)
+        self.frm_cpd_content.configure(borderwidth="2")
+        self.frm_cpd_content.configure(relief=GROOVE)
+        self.frm_cpd_content.configure(width=685)
+
+        self.Label4 = Label(self.frm_cpd_content)
+        self.Label4.place(relx=0.03, rely=0.03, height=18, width=76)
+        self.Label4.configure(text='''Labels''')
+        self.Label4.configure(width=76)
+
+        self.Label5 = Label(self.frm_cpd_content)
+        self.Label5.place(relx=0.39, rely=0.03, height=18, width=156)
+        self.Label5.configure(text='''NPT''')
+        self.Label5.configure(width=156)
+
+        self.txt_cpd_labels = Text(self.frm_cpd_content)
+        self.txt_cpd_labels.place(relx=0.01, rely=0.08, relheight=0.79
+                                  , relwidth=0.2)
+        self.txt_cpd_labels.configure(background="white")
+        self.txt_cpd_labels.configure(font="TkTextFont")
+        self.txt_cpd_labels.configure(selectbackground="#c4c4c4")
+        self.txt_cpd_labels.configure(width=136)
+        self.txt_cpd_labels.configure(wrap=WORD)
+
+        self.btn_cpd_apply_labels = Button(self.frm_cpd_content)
+        self.btn_cpd_apply_labels.place(relx=0.07, rely=0.9, height=26, width=97)
+
+        self.btn_cpd_apply_labels.configure(activebackground="#d9d9d9")
+        self.btn_cpd_apply_labels.configure(command=duration_support.cmd_cpd_apply_label)
+        self.btn_cpd_apply_labels.configure(text='''Apply Label''')
+        self.btn_cpd_apply_labels.configure(width=97)
+
+        self.frm_cpd_npt = Frame(self.frm_cpd_content)
+        self.frm_cpd_npt.place(relx=0.23, rely=0.08, relheight=0.79
+                               , relwidth=0.75)
+        self.frm_cpd_npt.configure(relief=SUNKEN)
+        self.frm_cpd_npt.configure(borderwidth="2")
+        self.frm_cpd_npt.configure(relief=SUNKEN)
+        self.frm_cpd_npt.configure(width=515)
+
+        self.btn_cpd_apply_npt = Button(self.frm_cpd_content)
+        self.btn_cpd_apply_npt.place(relx=0.86, rely=0.9, height=26, width=87)
+        self.btn_cpd_apply_npt.configure(activebackground="#d9d9d9")
+        self.btn_cpd_apply_npt.configure(command=duration_support.cmd_cpd_apply_npt)
+        self.btn_cpd_apply_npt.configure(text='''Apply NPT''')
+        self.btn_cpd_apply_npt.configure(width=87)
 
 
+        # Distribution
+        self.frm_distribution = Frame(top)
+        self.frm_distribution.place(relx=0.25, rely=0.13, relheight=0.78
+                                    , relwidth=0.74)
+        self.frm_distribution.configure(relief=GROOVE)
+        self.frm_distribution.configure(borderwidth="2")
+        self.frm_distribution.configure(relief=GROOVE)
+        self.frm_distribution.configure(width=685)
 
+        self.frm_distribution_table = Frame(self.frm_distribution)
+        self.frm_distribution_table.place(relx=0.01, rely=0.03, relheight=0.86
+                , relwidth=0.97)
+        self.frm_distribution_table.configure(relief=SUNKEN)
+        self.frm_distribution_table.configure(borderwidth="2")
+        self.frm_distribution_table.configure(relief=SUNKEN)
+        self.frm_distribution_table.configure(width=665)
 
+        self.btn_distribution_apply = Button(self.frm_distribution)
+        self.btn_distribution_apply.place(relx=0.83, rely=0.9, height=26
+                , width=107)
+        self.btn_distribution_apply.configure(activebackground="#d9d9d9")
+        self.btn_distribution_apply.configure(text='''Button''')
+        self.btn_distribution_apply.configure(width=107)
+        self.btn_distribution_apply.configure(command=duration_support.cmd_dist_apply)
+
+        self.frm_distribution.pi = self.frm_distribution.place_info()
+        self.frm_cpd_content.pi = self.frm_cpd_content.place_info()
 
 if __name__ == '__main__':
     vp_start_gui()

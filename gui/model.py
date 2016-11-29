@@ -1,6 +1,6 @@
 import mybayes as bayes
 import numpy as np
-from mybayes.influence import ProbTable
+from mybayes.influence import ProbTable, Normal
 from mybayes.settings import NumberOfSample
 from copy import deepcopy
 
@@ -166,10 +166,14 @@ class Model(object):
     def build_duration(self, activity):
         duration = activity.duration_model
         delay_node = self.build_knowned_risk(duration, duration.get_element_by_name('knowned_risk'))
+        duration_node = self.build_trade_off(duration, duration.get_element_by_name('trade_off'))
 
         duration_bayes = activity.get_bayes_node('duration')
 
-        samples = [10*s for s in delay_node.get_samples()]
+        n = NumberOfSample
+        delays = delay_node.get_samples()
+        durations = duration_node.get_samples()
+        samples = [(1-delays[i])*durations[i] for i in range(n)]
 
         duration_bayes.set_samples(samples)
 
@@ -243,7 +247,33 @@ class Model(object):
         return delay_node
 
     def build_trade_off(self, duration, trade_off):
-        pass
+        resources = trade_off.get_node('resources')
+        initial_estimate = trade_off.get_node('initial_estimate')
+
+        resources_probs= resources.get_pre_calc_data()
+        resources_samples = ProbTable(resources_probs, range(len(resources_probs)))
+        ie_samples = Normal(initial_estimate.get_param('loc'),
+                                  initial_estimate.get_param('scale'))
+
+        n = NumberOfSample
+        samples =[0] * n
+
+        for i in range(n):
+            index = int(resources_samples[i])
+            triangle = trade_off.triangle_param_rank[index]
+            ie = ie_samples[i]
+            samples[i] = np.random.triangular(triangle[0]*ie, triangle[1]*ie, triangle[2]*ie,1)[0]
+
+        # tao node de ve histogram
+        duration_node = bayes.nfact.TempNode(samples=samples)
+
+        id = export_plot_node.add(('Duration', duration_node))
+
+        trade_off.export_plot.append(id)
+        trade_off.output_node = id
+
+        return duration_node
+
 
 
     def dump_data(self):
@@ -455,19 +485,34 @@ class KnownedRiskModel(DurationElement):
         risk_event = self.get_node('risk_event')
         risk_event.evidences = [control,]
 
+        impact = self.nodes[1]
+        impact.set_labels(['Very Low', 'Low', 'Medium', 'High', 'Very Hide'])
+        impact.lock_labels = True
+
+
 class TradeOffModel(DurationElement):
 
     def __init__(self, activity_name):
         super(TradeOffModel, self).__init__(activity_name)
+        self.triangle_param_rank=[
+            [1.4, 1.8, 2.5],
+            [1, 1.3, 1.5],
+            [0.9, 1, 1.2],
+            [0.8, 0.9, 1],
+            [0.7, 0.75, 0.9]
+        ]
         self.nodes_name_label=('Resources', 'Initial Estimate')
         self.nodes_name=('resources', 'initial_estimate')
 
         n = len(self.nodes_name)
         self.nodes = [None] * n
-        types = ['normal', 'tnormal01']
-        for i in range(n):
-            n_name = "%s-%s" %(self.activity_name, self.nodes_name[i])
-            self.nodes[i] = NodeContinuousInterval(n_name, types[i])
+        n_names = ["%s-%s" %(self.activity_name, self.nodes_name[i])
+                   for i in range(len(self.nodes_name))]
+        self.nodes[0] = NodeCpdModel(n_names[0])
+        self.nodes[0].set_labels(['Very Low', 'Low', 'Medium', 'High', 'Very Hide'])
+        self.nodes[0].lock_labels = True
+
+        self.nodes[1] = NodeContinuousInterval(n_names[1], 'normal')
 
 
 class NodeContinuousInterval(object):
@@ -477,20 +522,51 @@ class NodeContinuousInterval(object):
         self.type_string = type_string
         self.param_names = self.type[type_string]
         self.choice_value = None
-        self.params = [0]*len(self.param_names)
+        self.data = None
 
     def pre_calc_choice(self):
         raise NotImplementedError()
 
     def can_pre_choice(self):
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        return True
 
+
+    def get_columns_label(self):
+        return ['Values',]
+
+    def get_rows_label(self):
+        return self.param_names
+
+    def get_param(self, name):
+        index = next(i for i in range(len(self.param_names)) if self.param_names[i]==name)
+        return self.data[index][0]
+
+    def dump_data(self):
+        return {
+            'model':'NodeContinuousInterval',
+            'name': self.name,
+            'type_string':self.type_string,
+            'choice_value':self.choice_value,
+            'data':self.data
+        }
+
+    def read_data(self, json_dict):
+        self.name = json_dict['name']
+        self.type_string = json_dict['type_string']
+        self.choice_value = json_dict['choice_value']
+        self.data = json_dict['data']
+        self.param_names = self.type[self.type_string]
+
+    def get_type_string(self):
+        return 'Distribution: %s' % self.type_string
 
 class LabeledNodeModel(object):
     def __init__(self, name, node_id=-1):
         self.name = name
         self.node_id = node_id
         self.labels = []
+        self.lock_labels = False
 
     def set_labels(self, labels):
         self.labels = [x for x in labels if x]
@@ -545,6 +621,8 @@ class NodeCpdModel(LabeledNodeModel):
         self.data = json_dict['data']
         self.choice_index = int(json_dict['choice_index'])
 
+    def get_type_string(self):
+        return 'CPD'
 
 
 

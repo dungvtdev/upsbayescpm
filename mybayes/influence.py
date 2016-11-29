@@ -89,6 +89,13 @@ class ProbTable(object):
                     break
         return s2
 
+class Normal():
+    def __init__(self, loc, scale):
+        self.loc = loc
+        self.scale = scale
+
+    def generate(self, size):
+        return np.random.normal(loc=self.loc, scale=self.scale, size=size)
 
 
 

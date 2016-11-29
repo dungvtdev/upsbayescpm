@@ -8,6 +8,7 @@
 import sys
 from copy import deepcopy
 from .utils.table_input import TableInput
+from .model import NodeCpdModel, NodeContinuousInterval
 
 try:
     from Tkinter import *
@@ -34,10 +35,10 @@ def set_Tk_var():
     var_notif = StringVar()
 
 
-def cmd_choices_apply():
+def cmd_cpd_apply_label():
     print('duration3_support.cmd_choices_apply')
     sys.stdout.flush()
-    txt_str = w.txt_labels.get(1.0, END)
+    txt_str = w.txt_cpd_labels.get(1.0, END)
     labels = [x for x in txt_str.split() if x]
 
     node = get_current_node()
@@ -46,13 +47,23 @@ def cmd_choices_apply():
     redraw_data()
 
 
-def cmd_data_apply():
+def cmd_cpd_apply_npt():
     print('duration3_support.cmd_data_apply')
     sys.stdout.flush()
-    data = w.data_table.export_data()
+    data = w.data_cpd_table.export_data()
     print('Apply data %s' %str(data))
     node = get_current_node()
     node.data = data
+
+
+def cmd_dist_apply():
+    print('duration3_support.cmd_dist_apply')
+    sys.stdout.flush()
+    data = w.data_dist_table.export_data()
+    print('Apply data %s' %str(data))
+    node = get_current_node()
+    node.data = data
+
 
 def cmd_help():
     print('duration3_support.cmd_help')
@@ -132,20 +143,53 @@ def on_lst_nodes_select(event):
 def redraw_data():
     print('redaw data')
     node = get_current_node()
+    if hasattr(node, 'get_type_string'):
+        type = node.get_type_string()
+        w.lb_type.configure(text='Type: %s' % type)
+    else:
+        w.lb_type.configure(text='')
 
-    # render labels
-    w.txt_labels.delete(1.0, END)
-    str_labels = '\n'.join(node.labels)
-    w.txt_labels.insert(END, str_labels)
+    if isinstance(node, NodeCpdModel):
+        switch_tab(0)
+        # render labels
+        w.txt_cpd_labels.config(state=NORMAL)
+        w.txt_cpd_labels.delete(1.0, END)
+        str_labels = '\n'.join(node.labels)
+        w.txt_cpd_labels.insert(END, str_labels)
 
-    # render data
-    for widget in w.frm_data.winfo_children():
-        widget.destroy()
+        if node.lock_labels:
+            w.txt_cpd_labels.config(state=DISABLED)
+            w.btn_cpd_apply_labels.config(state=DISABLED)
+        else:
+            w.txt_cpd_labels.config(state=NORMAL)
+            w.btn_cpd_apply_labels.config(state=NORMAL)
 
-    rows = node.labels
-    columns = node.get_table_labels()
-    data = node.data
-    w.data_table = TableInput(w.frm_data,rows, columns, data)
+        # render data
+        for widget in w.frm_cpd_npt.winfo_children():
+            widget.destroy()
+
+        rows = node.labels
+        columns = node.get_table_labels()
+        data = node.data
+        w.data_cpd_table = TableInput(w.frm_cpd_npt,rows, columns, data)
+    elif isinstance(node, NodeContinuousInterval):
+        switch_tab(1)
+        columns = node.get_columns_label()
+        rows = node.get_rows_label()
+
+        # render data
+        for widget in w.frm_distribution_table.winfo_children():
+            widget.destroy()
+
+        data = node.data
+        w.data_dist_table = TableInput(w.frm_distribution_table,rows, columns, data)
+
+def switch_tab(index):
+    tabs = (w.frm_cpd_content, w.frm_distribution)
+    for i in range(len(tabs)):
+        if i!=index:
+            tabs[i].place_forget()
+    tabs[index].place(tabs[index].pi)
 
 def get_current_node():
     element = w.duration_model.get_element(w.duration_model.get_element_label_index(w.lst_risks_cur_select))
