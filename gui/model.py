@@ -18,7 +18,8 @@ class TempCache(object):
         return self.data[id]
 
     def remove(self, id):
-        del self.data[id]
+        if id and id in self.data:
+            del self.data[id]
 
 
 export_plot_node = None
@@ -124,14 +125,19 @@ class Model(object):
         print('Build and run')
         bayes.remove_network('test')
         bayes.new_network('test')
-        # success = self.build_network()
-        # if success:
-        #     print('update')
-        #     self.run()
-        # else:
-        #     print('graph khong hop le')
-        for act in self.nodes:
-            self.build_duration(act)
+        self.reset()
+
+        success = self.build_network()
+        if success:
+            # populate duration first
+            for act in self.nodes:
+                self.build_duration(act)
+
+            print('update')
+            self.run()
+        else:
+            print('graph khong hop le')
+
 
     def populate_arc(self, arc):
         start = self.get_node(arc.start_id)
@@ -147,11 +153,9 @@ class Model(object):
             # start_lf.set_weight([1, -1])
 
     def create_action(self, node):
-        loc = node.data['normal'][0]
-        scale = node.data['normal'][1]
-
         es = bayes.nfact.MaxAddValue(add_value=1)  # 5
-        duration = bayes.nfact.Gaussian(loc=loc, scale=scale)  # 7
+        # duration = bayes.nfact.Gaussian(loc=loc, scale=scale)  # 7
+        duration = bayes.nfact.TempNode()
         ef = bayes.nfact.Equation(es, duration)  # 8
         lf = bayes.nfact.MaxAddValue(add_value=-1)  # 9
         ls = bayes.nfact.Equation(lf, duration)  # 10
@@ -161,7 +165,13 @@ class Model(object):
 
     def build_duration(self, activity):
         duration = activity.duration_model
-        self.build_knowned_risk(duration, duration.get_element_by_name('knowned_risk'))
+        delay_node = self.build_knowned_risk(duration, duration.get_element_by_name('knowned_risk'))
+
+        duration_bayes = activity.get_bayes_node('duration')
+
+        samples = [10*s for s in delay_node.get_samples()]
+
+        duration_bayes.set_samples(samples)
 
 
     def build_knowned_risk(self, duration, known_risk):
@@ -253,6 +263,10 @@ class Model(object):
         for arc in arcs:
             self.arcs.append(ArcModel().read_data(arc))
 
+    def reset(self):
+        for node in self.nodes:
+            node.reset()
+
 class ActivityNodeModel(object):
     name = ''
     node_id = None
@@ -261,6 +275,15 @@ class ActivityNodeModel(object):
     # (es, ef, ls, lf, duration)
     bayes_nodes = ()
     duration_model = None   # type: DurationNodeModel
+
+    def copy(self):
+        a = ActivityNodeModel(self.name)
+        a.node_id = self.node_id
+        a.text_id = self.text_id
+        a.ui_position = self.ui_position
+        a.duration_model = deepcopy(self.duration_model)
+        a.bayes_nodes = self.bayes_nodes
+        return a
 
     def __init__(self, name):
         self.name = name
@@ -284,7 +307,11 @@ class ActivityNodeModel(object):
                 tnode = export_plot_node.get(id)
                 name = '%s-%s' %(k,tnode[0])
                 export.append((name, tnode[1]))
-
+        ms = ('es', 'ef', 'ls', 'lf', 'duration')
+        if self.bayes_nodes:
+            for m in ms:
+                node = self.get_bayes_node(m)
+                export.append((m,node))
         return export
 
     def dump_data(self):
@@ -302,6 +329,10 @@ class ActivityNodeModel(object):
         self.duration_model.read_data(json_dict['duration'])
 
         return self
+
+    def reset(self):
+        self.duration_model.reset()
+        self.bayes_nodes = ()
 
 
 class ArcModel(object):
@@ -353,6 +384,10 @@ class DurationNodeModel(object):
         for i in range(len(ls)):
             self.elements[i].read_data(ls[i])
 
+    def reset(self):
+        for e in self.elements:
+            e.reset()
+
 
 class DurationElement(object):
     def __init__(self, activity_name):
@@ -383,6 +418,13 @@ class DurationElement(object):
     def read_data(self, ls):
         for i in range(len(ls)):
             self.nodes[i].read_data(ls[i])
+
+    def reset(self):
+        for e in self.export_plot:
+            export_plot_node.remove(e)
+        export_plot_node.remove(self.output_node)
+        self.export_plot = []
+        self.output_node = None
 
 class KnownedRiskModel(DurationElement):
     # self.control = None     # Cpd

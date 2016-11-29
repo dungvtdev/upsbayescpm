@@ -81,7 +81,7 @@ def init(top, gui, *args, **kwargs):
     root = top
 
     w.orig_activity_node = kwargs['activity_node']
-    w.activity_node = deepcopy(w.orig_activity_node)
+    w.activity_node = w.orig_activity_node.copy() # deepcopy(w.orig_activity_node)
     w.callback_function = kwargs['callback']
 
     # init

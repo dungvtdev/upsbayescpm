@@ -163,7 +163,10 @@ class TempNode(Node):
 
     def __init__(self, **kargv):
         super(TempNode, self).__init__(*kargv)
-        self.cache.samples = kargv['samples']
+        self.cache.samples = kargv.get('samples', None)
+
+    def set_samples(self, samples):
+        self.cache.samples = samples
 
     def get_samples(self, number=None):
         cached, cache_samples = self.cache.samples

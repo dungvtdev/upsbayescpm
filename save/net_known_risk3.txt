@@ -1,0 +1,139 @@
+{
+	"Model": {
+		"Activities": [{
+			"id": 73,
+			"ui_pos": [184.0, 107.0],
+			"duration": [
+				[{
+					"choice_index": -1,
+					"data": [
+						[0.2],
+						[0.8]
+					],
+					"labels": ["a", "b"],
+					"name": "NewNode-control",
+					"model": "NodeCpdModel"
+				}, {
+					"choice_index": -1,
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"labels": ["c", "d"],
+					"name": "NewNode-impact",
+					"model": "NodeCpdModel"
+				}, {
+					"choice_index": -1,
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"labels": ["e", "f"],
+					"name": "NewNode-risk_event",
+					"model": "NodeCpdModel"
+				}, {
+					"choice_index": -1,
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"labels": ["g", "h"],
+					"name": "NewNode-response",
+					"model": "NodeCpdModel"
+				}]
+			],
+			"name": "A"
+		}, {
+			"id": 111,
+			"ui_pos": [291.0, 248.0],
+			"duration": [
+				[{
+					"choice_index": -1,
+					"data": [
+						[0.2],
+						[0.8]
+					],
+					"labels": ["a", "b"],
+					"name": "NewNode-control",
+					"model": "NodeCpdModel"
+				}, {
+					"choice_index": -1,
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"labels": ["c", "d"],
+					"name": "NewNode-impact",
+					"model": "NodeCpdModel"
+				}, {
+					"choice_index": -1,
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"labels": ["e", "f"],
+					"name": "NewNode-risk_event",
+					"model": "NodeCpdModel"
+				}, {
+					"choice_index": -1,
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"labels": ["g", "h"],
+					"name": "NewNode-response",
+					"model": "NodeCpdModel"
+				}]
+			],
+			"name": "B"
+		}, {
+			"id": 151,
+			"ui_pos": [105.0, 214.0],
+			"duration": [
+				[{
+					"choice_index": -1,
+					"data": [
+						[0.2],
+						[0.8]
+					],
+					"labels": ["a", "b"],
+					"name": "NewNode-control",
+					"model": "NodeCpdModel"
+				}, {
+					"choice_index": -1,
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"labels": ["c", "d"],
+					"name": "NewNode-impact",
+					"model": "NodeCpdModel"
+				}, {
+					"choice_index": -1,
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"labels": ["e", "f"],
+					"name": "NewNode-risk_event",
+					"model": "NodeCpdModel"
+				}, {
+					"choice_index": -1,
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"labels": ["g", "h"],
+					"name": "NewNode-response",
+					"model": "NodeCpdModel"
+				}]
+			],
+			"name": "C"
+		}],
+		"Arcs": [
+			[73, 111],
+			[73, 151],
+			[151, 111]
+		]
+	}
+}
