@@ -242,6 +242,10 @@ class Model(object):
 
         return delay_node
 
+    def build_trade_off(self, duration, trade_off):
+        pass
+
+
     def dump_data(self):
         return {
             'Model':{
@@ -355,8 +359,8 @@ class ArcModel(object):
         return self
 
 class DurationNodeModel(object):
-    element_names_label=('Knowned Risks',)
-    element_names = ('knowned_risk',)
+    element_names_label=('Knowned Risks', 'Trade Off')
+    element_names = ('knowned_risk', 'trade_off')
 
     def __init__(self, activity_name):
         self.activity_name = activity_name
@@ -366,6 +370,11 @@ class DurationNodeModel(object):
         # create knowned risk
         knowned_risk = KnownedRiskModel(activity_name)
         self.elements[0] = knowned_risk
+
+        # create trade off
+        trade_off = TradeOffModel(activity_name)
+        self.elements[1] = trade_off
+
 
     def get_element_label_index(self, name):
         return next(i for i in range(len(self.element_names_label)) if name == self.element_names_label[i])
@@ -445,6 +454,36 @@ class KnownedRiskModel(DurationElement):
         control = self.get_node('control')
         risk_event = self.get_node('risk_event')
         risk_event.evidences = [control,]
+
+class TradeOffModel(DurationElement):
+
+    def __init__(self, activity_name):
+        super(TradeOffModel, self).__init__(activity_name)
+        self.nodes_name_label=('Resources', 'Initial Estimate')
+        self.nodes_name=('resources', 'initial_estimate')
+
+        n = len(self.nodes_name)
+        self.nodes = [None] * n
+        types = ['normal', 'tnormal01']
+        for i in range(n):
+            n_name = "%s-%s" %(self.activity_name, self.nodes_name[i])
+            self.nodes[i] = NodeContinuousInterval(n_name, types[i])
+
+
+class NodeContinuousInterval(object):
+    type = {'normal':['loc','scale'], 'tnormal01':['loc','scale']}
+    def __init__(self, name, type_string):
+        self.name = name
+        self.type_string = type_string
+        self.param_names = self.type[type_string]
+        self.choice_value = None
+        self.params = [0]*len(self.param_names)
+
+    def pre_calc_choice(self):
+        raise NotImplementedError()
+
+    def can_pre_choice(self):
+        raise NotImplementedError()
 
 
 class LabeledNodeModel(object):
