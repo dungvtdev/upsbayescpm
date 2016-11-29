@@ -33,7 +33,7 @@ def test_table_prob():
 
 if __name__ == '__main__':
     # main()
-    # control_data = [0.6,0.15, 0.25]
-    # risk_event_data = [[0.3, 0.8, 0.25], [0.7, 0.2, 0.75]]
-    # calc_risk_event(control_data, risk_event_data, 0)
-    test_table_prob()
+    control_data = [0.6,0.15, 0.25]
+    risk_event_data = [[0.3, 0.8, 0.25], [0.7, 0.2, 0.75]]
+    calc_risk_event(control_data, risk_event_data, 0)
+    # test_table_prob()

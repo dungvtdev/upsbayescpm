@@ -74,6 +74,7 @@ class ProbTable(object):
     def generate(self, size):
         r = [None]* size
         s = np.random.uniform(low=0.0, high=1.0, size=size)
+        s2 = [0]*size
         test = [v for v in self.probs]
         t = 1
         for i in range(len(test))[::-1]:
@@ -84,9 +85,9 @@ class ProbTable(object):
         for i in range(len(s)):
             for j in range(n)[::-1]:
                 if s[i] >=test[j]:
-                    s[i]= self.values[j]
+                    s2[i]= self.values[j]
                     break
-        return s
+        return s2
 
 
 

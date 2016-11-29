@@ -2,6 +2,7 @@ import mybayes as bayes
 import numpy as np
 from mybayes.influence import ProbTable
 from mybayes.settings import NumberOfSample
+from copy import deepcopy
 
 class Model(object):
     nodes = []
@@ -59,9 +60,9 @@ class Model(object):
             return arcs
 
     def build_network(self):
-        print('Build network')
-        bayes.remove_network('test')
-        bayes.new_network('test')
+        # print('Build network')
+        # bayes.remove_network('test')
+        # bayes.new_network('test')
         # create nodes
         for node in self.nodes:
             self.create_action(node)
@@ -99,6 +100,8 @@ class Model(object):
 
     def build_and_run(self):
         print('Build and run')
+        bayes.remove_network('test')
+        bayes.new_network('test')
         # success = self.build_network()
         # if success:
         #     print('update')
@@ -146,10 +149,14 @@ class Model(object):
         response = known_risk.get_node('response')
 
         # normalize table
-        # here
+        control_data = control.get_pre_calc_data()
+        risk_event_data = risk_event.get_pre_calc_data()
+        impact_data = impact.get_pre_calc_data()
+        response_data = response.get_pre_calc_data()
+
 
         # tinh risk_event
-        risk_event_values = bayes.influence.calc_risk_event(control.data, risk_event.data,
+        risk_event_values = bayes.influence.calc_risk_event(control_data, risk_event_data,
                                                             control.choice_index if control.choice_index!=control.MANUAL else -1)
 
         # build model to run
@@ -165,39 +172,38 @@ class Model(object):
 
         # TODO doi cho nay thanh input
         # calc delay from samples
-        step = 1.0/(len(impact.data)+1)
-        impact_real_values = [step*(i+1) for i in range(len(impact.data))]   # gia tri cua impact tuong ung voi cac rank
+        step = 1.0/(len(impact_data)+1)
+        impact_real_values = [step*(i+1) for i in range(len(impact_data))]   # gia tri cua impact tuong ung voi cac rank
 
         step = 1.0/(len(risk_event_values)-1)
         risk_event_real_values = [step*i for i in range(len(risk_event_values))] # tu 0...1
 
-        step = 1.0 / (len(response.data))
-        response_real_values = [step * (i+1) for i in range(len(response.data))[::-1]]  # tu 1..>0
+        step = 1.0 / (len(response_data))
+        response_real_values = [step * (i+1) for i in range(len(response_data))[::-1]]  # tu 1..>0
 
         impact_risk_values=[]
         impact_risk_prob =[]
-        impact_prob = impact.data
+        impact_prob = impact_data
         risk_prob=risk_event_values
         for i in range(len(impact_prob)):
             for j in range(len(risk_prob)):
-                impact_risk_prob.append([i]*risk_prob[j])
-                impact_risk_values.append([i]*risk_event_real_values[i])
+                impact_risk_prob.append(impact_prob[i]*risk_prob[j])
+                impact_risk_values.append(impact_prob[i]*risk_event_real_values[i])
 
-        n = len(NumberOfSample)
+        n = NumberOfSample
         impact_risk_samples = ProbTable(impact_risk_prob, impact_risk_values).generate(n)
-        response_samples = ProbTable(response.data, range(len(response.data))).generate(n)
+        response_samples = ProbTable(response_data, range(len(response_data))).generate(n)
 
         delay = [None]*n
 
         for i in range(n):
-            pre_delay_mean = impact_risk_samples[i]
             pre_delay = bayes.influence.generate_tnormal(impact_risk_samples[i],0.1,0,1)
             delay[i]= pre_delay*response_real_values[response_samples[i]]
 
         # tao node de ve histogram
-        delay_node = bayes.nfact.TempNode(delay)
+        delay_node = bayes.nfact.TempNode(samples=delay)
 
-        duration.algo_nodes['Delay'] = delay_node
+        known_risk.algo_nodes['Delay'] = delay_node
         known_risk.output_node = delay_node
 
     def dump_data(self):
@@ -390,22 +396,19 @@ class NodeCpdModel(LabeledNodeModel):
         self.choice_index = self.MANUAL
         # self.algo_node = None   # node chay thuat toan
 
-    def format_data(self):
-        data = self.data
+    def get_pre_calc_data(self):
+        data = deepcopy(self.data)
         if data:
-            if isinstance(data[0], list) and len(data[0]) == 1:
-                for i in range(len(data)):
-                    data[i] = data[i][0]
-                tong = sum(data)
-                for i in range(len(data)):
-                    data[i] = data[i] / tong
-            else:
-                for i in range(len(data)):
-                    tong = sum(data[i])
-                    for j in range(len(data[i])):
-                        data[i][j] = data[i][j]/tong
+            for j in range(len(data[0])):
+                n = len(data)
+                tong = sum([data[i][j] for i in range(n)])
+                for i in range(n):
+                    data[i][j] = data[i][j]/tong
 
-        self.data = data
+        # format lai neu column == 1
+        if len(data[0]) == 1:
+            data = [data[i][0] for i in range(len(data))]
+        return data
 
     def can_pre_choice(self):
         return not self.evidences
@@ -418,7 +421,7 @@ class NodeCpdModel(LabeledNodeModel):
             return ['Prob',]
 
     def dump_data(self):
-        self.format_data()
+        # self.normalize_data()
         return {'model':'NodeCpdModel',
                 'name':self.name,
                 'labels':self.labels,
