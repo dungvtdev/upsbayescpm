@@ -1,5 +1,7 @@
 import mybayes as bayes
-
+import numpy as np
+from mybayes.influence import ProbTable
+from mybayes.settings import NumberOfSample
 
 class Model(object):
     nodes = []
@@ -90,6 +92,17 @@ class Model(object):
     def run(self):
         bayes.update()
 
+    def build_and_run(self):
+        print('Build and run')
+        # success = self.build_network()
+        # if success:
+        #     print('update')
+        #     self.run()
+        # else:
+        #     print('graph khong hop le')
+        for act in self.nodes:
+            self.build_duration(act)
+
     def populate_arc(self, arc):
         start = self.get_node(arc.start_id)
         end = self.get_node(arc.end_id)
@@ -116,6 +129,72 @@ class Model(object):
 
         node.bayes_nodes = (es, ef, ls, lf, duration)
 
+    def build_duration(self, activity):
+        duration = activity.duration_model
+        self.build_knowned_risk(duration, duration.get_element_by_name('knowned_risk'))
+
+
+    def build_knowned_risk(self, duration, known_risk):
+        control = known_risk.get_node('control')
+        risk_event = known_risk.get_node('risk_event')
+        impact = known_risk.get_node('impact')
+        response = known_risk.get_node('response')
+
+        # normalize table
+        # here
+
+        # tinh risk_event
+        risk_event_values = bayes.influence.calc_risk_event(control.data, risk_event.data,
+                                                            control.choice_index if control.choice_index!=control.MANUAL else -1)
+
+        # build model to run
+        # risk_event_node = bayes.nfact.TableNode(values=risk_event_values)
+        # risk_event_samples = risk_event_node.get_samples()
+        #
+        # impact_node = bayes.nfact.TableNode(values=impact.data)
+        # impact_samples = impact_node.get_samples()
+        #
+        # response_node = bayes.nfact.TableNode(values=response.data)
+        # response_samples = response_node.get_samples()
+
+
+        # TODO doi cho nay thanh input
+        # calc delay from samples
+        step = 1.0/(len(impact.data)+1)
+        impact_real_values = [step*(i+1) for i in range(len(impact.data))]   # gia tri cua impact tuong ung voi cac rank
+
+        step = 1.0/(len(risk_event_values)-1)
+        risk_event_real_values = [step*i for i in range(len(risk_event_values))] # tu 0...1
+
+        step = 1.0 / (len(response.data))
+        response_real_values = [step * (i+1) for i in range(len(response.data))[::-1]]  # tu 1..>0
+
+        impact_risk_values=[]
+        impact_risk_prob =[]
+        impact_prob = impact.data
+        risk_prob=risk_event_values
+        for i in range(len(impact_prob)):
+            for j in range(len(risk_prob)):
+                impact_risk_prob.append([i]*risk_prob[j])
+                impact_risk_values.append([i]*risk_event_real_values[i])
+
+        n = len(NumberOfSample)
+        impact_risk_samples = ProbTable(impact_risk_prob, impact_risk_values).generate(n)
+        response_samples = ProbTable(response.data, range(len(response.data))).generate(n)
+
+        delay = [None]*n
+
+        for i in range(n):
+            pre_delay_mean = impact_risk_samples[i]
+            pre_delay = bayes.influence.generate_tnormal(impact_risk_samples[i],0.1,0,1)
+            delay[i]= pre_delay*response_real_values[response_samples[i]]
+
+        # tao node de ve histogram
+        delay_node = bayes.nfact.TempNode(delay)
+
+        duration.algo_nodes['Delay'] = delay_node
+        known_risk.output_node = delay_node
+
 
 class ActivityNodeModel(object):
     name = ''
@@ -138,6 +217,14 @@ class ActivityNodeModel(object):
 
     def replace_duration(self, new_duration):
         self.duration_model = new_duration
+
+    def get_export_nodes(self):
+        export = []
+        for i,k in enumerate(self.duration_model.element_names_label):
+            node = self.duration_model.get_element[i]
+            export.append((k, node))
+
+        return export
 
 
 class ArcModel(object):
@@ -167,6 +254,9 @@ class DurationNodeModel(object):
     def get_element(self, index):
         return self.elements[index]
 
+    def get_element_by_name(self, name):
+        id = next(i for i in range(len(self.element_names)) if name == self.element_names[i])
+        return self.get_element(id)
 
 class DurationElement(object):
     def __init__(self, activity_name):
@@ -174,6 +264,8 @@ class DurationElement(object):
         self.nodes_name=[]
         self.nodes = []
         self.activity_name = activity_name
+        self.algo_nodes = {}
+        self.output_node = None         # node dau ra cua element
 
     def get_node_index_by_name(self, name):
         return next((i for i in range(len(self.nodes_name)) if self.nodes_name[i] == name))
@@ -199,12 +291,11 @@ class KnownedRiskModel(DurationElement):
         super(KnownedRiskModel, self).__init__(activity_name)
         self.nodes_name_label=('Control', 'Impact', 'Risk Event', 'Response')
         self.nodes_name =('control', 'impact', 'risk_event', 'response')
-        flags = (True, True, False, True)
 
         self.nodes = [None] * len(self.nodes_name)
         for i in range(len(self.nodes_name)):
             n_name = "%s-%s" %(self.activity_name, self.nodes_name[i])
-            self.nodes[i]= NodeCpdModel(n_name, can_choice=flags[i])
+            self.nodes[i]= NodeCpdModel(n_name)
 
         # link control va risk_event
         control = self.get_node('control')
@@ -225,12 +316,15 @@ class LabeledNodeModel(object):
 class NodeCpdModel(LabeledNodeModel):
     MANUAL = -1
 
-    def __init__(self, name, can_choice=False, node_id=-1):
+    def __init__(self, name, node_id=-1):
         super(NodeCpdModel, self).__init__(name, node_id)
         self.evidences = []     # nodeCpdModel
         self.data = []
         self.choice_index = self.MANUAL
-        self.can_pre_choice=can_choice
+        # self.algo_node = None   # node chay thuat toan
+
+    def can_pre_choice(self):
+        return not self.evidences
 
     def get_table_labels(self):
         if self.evidences:
@@ -239,17 +333,17 @@ class NodeCpdModel(LabeledNodeModel):
         else:
             return ['Prob',]
 
-    def dump_data(self):
-        return {'model':'NodeCpdModel',
-                'name':self.name,
-                'labels':self.labels,
-                'evidences':self.evidences,
-                'data':self.data,
-                'choice_index':self.choice_index
-                }
-
-    def read_data(self, json_data):
-        self.name=json_data['name']
+    # def dump_data(self):
+    #     return {'model':'NodeCpdModel',
+    #             'name':self.name,
+    #             'labels':self.labels,
+    #             'evidences':self.evidences,
+    #             'data':self.data,
+    #             'choice_index':self.choice_index
+    #             }
+    #
+    # def read_data(self, json_data):
+    #     self.name=json_data['name']
 
 
 

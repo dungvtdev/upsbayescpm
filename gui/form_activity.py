@@ -117,8 +117,6 @@ class Activity:
         self.cb_plot_node = ttk.Combobox(self.Labelframe2)
         self.cb_plot_node.place(relx=0.08, rely=0.34, relheight=0.12
                 , relwidth=0.83)
-        self.value_list = [1,2,3,]
-        self.cb_plot_node.configure(values=self.value_list)
         self.cb_plot_node.configure(textvariable=activity_support.cmb_plot_type)
         self.cb_plot_node.configure(takefocus="")
 

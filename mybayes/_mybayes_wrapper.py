@@ -43,7 +43,9 @@ class _NodeFactory(object):
              'Triangular': nd.TriangularNode,
              'Constant': nd.ConstantNode,
              'Equation': nd.EquationNode,
-             'MaxAddValue': nd.MaxAddValueNode}
+             'MaxAddValue': nd.MaxAddValueNode,
+             'TableNode':nd.TableNode,
+             'TempNode':nd.TempNode}
 
     def __getattr__(self, name):
         m_node = self.names.get(name, None)

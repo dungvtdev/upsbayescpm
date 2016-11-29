@@ -91,7 +91,7 @@ class Risks:
         for duration in durations:
             for element in duration.elements:
                 for node in element.nodes:
-                    if node.can_pre_choice:
+                    if node.can_pre_choice():
                         self.create_choice_ui(master, node, index)
                         index+=1
 

@@ -6,6 +6,8 @@
 
 
 import sys
+import matplotlib.pyplot as plt
+
 from copy import deepcopy
 from . import form_duration
 from . import mainapp
@@ -66,6 +68,12 @@ def cmd_plot():
     print('activity_support.cmd_plot')
     sys.stdout.flush()
 
+    plot_index = w.cb_plot_node.current()
+    node = w.plot_nodes[plot_index]
+    node.get_histogram()
+    node.draw_bar()
+    plt.show()
+
 def init(top, gui, *args, **kwargs):
     global w, top_level, root, txt_name
     w = gui
@@ -78,6 +86,12 @@ def init(top, gui, *args, **kwargs):
 
     # init
     txt_name.set(w.activity_node.name)
+
+
+def init_plot_list():
+    w.plot_nodes = w.activity_node.get_export_nodes()
+    w.value_list = [k[0] for k in w.plot_nodes]
+    w.cb_plot_node.configure(values=w.value_list)
 
 def destroy_window():
     # Function which closes the window.

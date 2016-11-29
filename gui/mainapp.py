@@ -167,13 +167,17 @@ class MainApplication(object):
         pass
 
     def run(self):
-        # print('run')
-        success = self.model.build_network()
-        if success:
-            print('update')
-            self.model.run()
-        else:
-            print('graph khong hop le')
+        print('run')
+        # success = self.model.build_network()
+        # if success:
+        #     print('update')
+        #     self.model.run()
+        # else:
+        #     print('graph khong hop le')
+
+        self.model.build_and_run()
+
+
 
     def open_risks_window(self):
         wnd_name = 'risks'

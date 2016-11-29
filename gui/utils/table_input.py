@@ -46,6 +46,7 @@ class TableInput(object):
 
     def export_data(self):
         data = [[self.items[r][c].get() for c in range(len(self.columns))] for r in range(len(self.rows))]
+        print('Data %s' % repr(data))
         return data
 
 """ Test

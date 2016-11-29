@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from . import settings
+from .influence import ProbTable
 
 # import math
 
@@ -144,6 +145,29 @@ class GaussianNode(Node):
         if not number:
             number = settings.NumberOfSample
         return np.random.normal(loc=self.loc, scale=self.scale, size=number)
+
+
+class TableNode(Node):
+
+    def __init__(self, **kargv):
+        super(TableNode, self).__init__(**kargv)
+        self.values = kargv['values']
+
+    def get_samples(self, number=None):
+        if not number:
+            number = settings.NumberOfSample
+        prob = ProbTable(self.values, range(len(self.values)))
+        return prob.generate(number)
+
+class TempNode(Node):
+
+    def __init__(self, **kargv):
+        super(TempNode, self).__init__(*kargv)
+        self.cache.samples = kargv['samples']
+
+    def get_samples(self, number=None):
+        cached, cache_samples = self.cache.samples
+        return cache_samples
 
 
 class ConstantNode(Node):
