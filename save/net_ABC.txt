@@ -1,0 +1,244 @@
+{
+	"Model": {
+		"Activities": [{
+			"ui_pos": [107.0, 62.0],
+			"name": "A",
+			"id": 109,
+			"duration": [
+				[{
+					"labels": ["co", "khong"],
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"name": "NewNode-control",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"],
+					"data": [
+						[0.1],
+						[0.2],
+						[0.3],
+						[0.3],
+						[0.2]
+					],
+					"name": "NewNode-impact",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"labels": ["true", "false"],
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"name": "NewNode-risk_event",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"labels": ["dk", "kdk"],
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"name": "NewNode-response",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}],
+				[{
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"],
+					"data": [
+						[0.2],
+						[0.1],
+						[0.3],
+						[0.25],
+						[0.25]
+					],
+					"name": "NewNode-resources",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"data": [
+						[10.0],
+						[1.0]
+					],
+					"name": "NewNode-initial_estimate",
+					"choice_value": null,
+					"type_string": "normal",
+					"model": "NodeContinuousInterval"
+				}],
+				[{
+					"data": [
+						[1.1],
+						[0.1]
+					],
+					"name": "NewNode-adjustment_factor",
+					"choice_value": null,
+					"type_string": "tnormal01",
+					"model": "NodeContinuousInterval"
+				}]
+			]
+		}, {
+			"ui_pos": [110.0, 279.0],
+			"name": "B",
+			"id": 141,
+			"duration": [
+				[{
+					"labels": ["co", "khong"],
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"name": "NewNode-control",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"],
+					"data": [
+						[0.1],
+						[0.2],
+						[0.3],
+						[0.3],
+						[0.2]
+					],
+					"name": "NewNode-impact",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"labels": ["true", "false"],
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"name": "NewNode-risk_event",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"labels": ["dk", "kdk"],
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"name": "NewNode-response",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}],
+				[{
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"],
+					"data": [
+						[0.2],
+						[0.1],
+						[0.3],
+						[0.25],
+						[0.25]
+					],
+					"name": "NewNode-resources",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"data": [
+						[15.0],
+						[1.0]
+					],
+					"name": "NewNode-initial_estimate",
+					"choice_value": null,
+					"type_string": "normal",
+					"model": "NodeContinuousInterval"
+				}],
+				[{
+					"data": [
+						[1.1],
+						[0.1]
+					],
+					"name": "NewNode-adjustment_factor",
+					"choice_value": null,
+					"type_string": "tnormal01",
+					"model": "NodeContinuousInterval"
+				}]
+			]
+		}, {
+			"ui_pos": [309.0, 199.0],
+			"name": "C",
+			"id": 138,
+			"duration": [
+				[{
+					"labels": ["co", "khong"],
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"name": "NewNode-control",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"],
+					"data": [
+						[0.1],
+						[0.2],
+						[0.3],
+						[0.3],
+						[0.2]
+					],
+					"name": "NewNode-impact",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"labels": ["true", "false"],
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"name": "NewNode-risk_event",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"labels": ["dk", "kdk"],
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"name": "NewNode-response",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}],
+				[{
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"],
+					"data": [
+						[0.2],
+						[0.1],
+						[0.3],
+						[0.25],
+						[0.25]
+					],
+					"name": "NewNode-resources",
+					"choice_index": -1,
+					"model": "NodeCpdModel"
+				}, {
+					"data": [
+						[20.0],
+						[1.0]
+					],
+					"name": "NewNode-initial_estimate",
+					"choice_value": null,
+					"type_string": "normal",
+					"model": "NodeContinuousInterval"
+				}],
+				[{
+					"data": [
+						[1.1],
+						[0.1]
+					],
+					"name": "NewNode-adjustment_factor",
+					"choice_value": null,
+					"type_string": "tnormal01",
+					"model": "NodeContinuousInterval"
+				}]
+			]
+		}],
+		"Arcs": [
+			[109, 138],
+			[109, 141],
+			[141, 138]
+		]
+	}
+}

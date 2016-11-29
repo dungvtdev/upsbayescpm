@@ -167,13 +167,16 @@ class Model(object):
         duration = activity.duration_model
         delay_node = self.build_knowned_risk(duration, duration.get_element_by_name('knowned_risk'))
         duration_node = self.build_trade_off(duration, duration.get_element_by_name('trade_off'))
+        adjust_node = self.build_unknown_factor(duration, duration.get_element_by_name('unknown_factor'))
 
         duration_bayes = activity.get_bayes_node('duration')
 
         n = NumberOfSample
         delays = delay_node.get_samples()
         durations = duration_node.get_samples()
-        samples = [(1-delays[i])*durations[i] for i in range(n)]
+        adjusts = adjust_node.get_samples()
+
+        samples = [(1+delays[i])*durations[i]*adjusts[i] for i in range(n)]
 
         duration_bayes.set_samples(samples)
 
@@ -224,7 +227,7 @@ class Model(object):
         for i in range(len(impact_prob)):
             for j in range(len(risk_prob)):
                 impact_risk_prob.append(impact_prob[i]*risk_prob[j])
-                impact_risk_values.append(impact_prob[i]*risk_event_real_values[i])
+                impact_risk_values.append(impact_real_values[i]*risk_event_real_values[j])
 
         n = NumberOfSample
         impact_risk_samples = ProbTable(impact_risk_prob, impact_risk_values).generate(n)
@@ -247,15 +250,16 @@ class Model(object):
         return delay_node
 
     def build_trade_off(self, duration, trade_off):
+        n = NumberOfSample
+
         resources = trade_off.get_node('resources')
         initial_estimate = trade_off.get_node('initial_estimate')
 
         resources_probs= resources.get_pre_calc_data()
-        resources_samples = ProbTable(resources_probs, range(len(resources_probs)))
+        resources_samples = ProbTable(resources_probs, range(len(resources_probs))).generate(n)
         ie_samples = Normal(initial_estimate.get_param('loc'),
-                                  initial_estimate.get_param('scale'))
+                                  initial_estimate.get_param('scale')).generate(n)
 
-        n = NumberOfSample
         samples =[0] * n
 
         for i in range(n):
@@ -273,6 +277,25 @@ class Model(object):
         trade_off.output_node = id
 
         return duration_node
+
+    def build_unknown_factor(self, duration, unknown_factor):
+        from scipy.stats import truncnorm
+        adjust = unknown_factor.get_node('adjustment_factor')
+        samples = truncnorm.rvs(0,1,
+                                  loc=adjust.get_param('loc'),
+                                  scale=adjust.get_param('scale'),
+                                  size = NumberOfSample)
+
+        # tao node de ve histogram
+        adjust_node = bayes.nfact.TempNode(samples=samples)
+
+        id = export_plot_node.add(('AdjustFactor', adjust_node))
+
+        unknown_factor.export_plot.append(id)
+        unknown_factor.output_node = id
+
+        return adjust_node
+
 
 
 
@@ -389,8 +412,8 @@ class ArcModel(object):
         return self
 
 class DurationNodeModel(object):
-    element_names_label=('Knowned Risks', 'Trade Off')
-    element_names = ('knowned_risk', 'trade_off')
+    element_names_label=('Knowned Risks', 'Trade Off', 'Unknown Factor')
+    element_names = ('knowned_risk', 'trade_off', 'unknown_factor')
 
     def __init__(self, activity_name):
         self.activity_name = activity_name
@@ -404,6 +427,10 @@ class DurationNodeModel(object):
         # create trade off
         trade_off = TradeOffModel(activity_name)
         self.elements[1] = trade_off
+
+        # create unknown factor
+        unknown_factor = UnknownFactorModel(activity_name)
+        self.elements[2] = unknown_factor
 
 
     def get_element_label_index(self, name):
@@ -514,6 +541,18 @@ class TradeOffModel(DurationElement):
 
         self.nodes[1] = NodeContinuousInterval(n_names[1], 'normal')
 
+
+class UnknownFactorModel(DurationElement):
+
+    def __init__(self, activity_name):
+        super(UnknownFactorModel, self).__init__(activity_name)
+        self.nodes_name_label=('Adjustment Factor',)
+        self.nodes_name=('adjustment_factor',)
+
+        n_name = "%s-%s" %(self.activity_name, self.nodes_name[0])
+        node = NodeContinuousInterval(n_name,'tnormal01')
+
+        self.nodes = [node,]
 
 class NodeContinuousInterval(object):
     type = {'normal':['loc','scale'], 'tnormal01':['loc','scale']}
