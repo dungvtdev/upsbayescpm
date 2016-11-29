@@ -32,18 +32,18 @@ def get_end_nodes(nodes):
 """ Duration Model
 """
 """ Knowned Risks """
-def calc_risk_event(control_data, risk_event_data, control_choice=-1):
+def calc_two_cpd_network(first, second, control_choice=-1):
     """
-    :param control_data: [] list data
-    :param risk_event_data:[] list data
+    :param first: [] list data
+    :param second:[] list data
     :return: None
     """
     model = BayesianModel([('C', 'R')])
-    cardC = len(control_data)
-    cardR = len(risk_event_data)
-    cpd_control = TabularCPD(variable='C', variable_card=cardC, values=[control_data])
+    cardC = len(first)
+    cardR = len(second)
+    cpd_control = TabularCPD(variable='C', variable_card=cardC, values=[first])
     cpd_risk_event = TabularCPD(variable='R', variable_card=cardR,
-                                values=risk_event_data,
+                                values=second,
                                 evidence=['C'],
                                 evidence_card=[cardC])
     model.add_cpds(cpd_control, cpd_risk_event)
@@ -60,7 +60,7 @@ def calc_risk_event(control_data, risk_event_data, control_choice=-1):
     return query.values
 
 def generate_tnormal(mean, var, nmin, nmax):
-    rnd = np.random.normal(mean, var, 1)
+    rnd = np.random.normal(mean, var, 1)[0]
     if rnd < nmin: rnd=nmin
     if rnd > nmax: rnd=nmax
     return rnd

@@ -49,6 +49,8 @@ class MainApplication(object):
         self.create_gui()
         self.bind_mouse()
 
+        self.new_file()
+
     def create_gui(self):
         self.create_menu()
         self.create_bottom_bar()
@@ -158,8 +160,13 @@ class MainApplication(object):
         utils.draw_checkered(self.canvas, 80)
 
     def open_file(self):
+        self.new_file()
+
         from tkinter import filedialog
-        file_path = filedialog.asksaveasfilename()
+        import sys, os
+        path = os.path.dirname(os.path.realpath(__file__))
+        path = os.path.join(path,'../net1.txt')
+        file_path = path #filedialog.asksaveasfilename()
 
         if file_path:
             with open(file_path, 'r') as infile:

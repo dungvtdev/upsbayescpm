@@ -4,6 +4,25 @@ from mybayes.influence import ProbTable
 from mybayes.settings import NumberOfSample
 from copy import deepcopy
 
+
+class TempCache(object):
+    data = {}
+    id_top = 0
+
+    def add(self, item):
+        self.id_top+=1
+        self.data[self.id_top] = item
+        return self.id_top
+
+    def get(self, id):
+        return self.data[id]
+
+    def remove(self, id):
+        del self.data[id]
+
+
+export_plot_node = None
+
 class Model(object):
     nodes = []
     arcs = []
@@ -12,6 +31,9 @@ class Model(object):
         bayes.remove_all_network()
         self.nodes = []
         self.arcs = []
+
+        global export_plot_node
+        export_plot_node = TempCache()
 
     def replace_node(self, node, new_node):
         self.remove_node(node)
@@ -156,7 +178,7 @@ class Model(object):
 
 
         # tinh risk_event
-        risk_event_values = bayes.influence.calc_risk_event(control_data, risk_event_data,
+        risk_event_values = bayes.influence.calc_two_cpd_network(control_data, risk_event_data,
                                                             control.choice_index if control.choice_index!=control.MANUAL else -1)
 
         # build model to run
@@ -203,8 +225,12 @@ class Model(object):
         # tao node de ve histogram
         delay_node = bayes.nfact.TempNode(samples=delay)
 
-        known_risk.algo_nodes['Delay'] = delay_node
-        known_risk.output_node = delay_node
+        id = export_plot_node.add(('Delay', delay_node))
+
+        known_risk.export_plot.append(id)
+        known_risk.output_node = id
+
+        return delay_node
 
     def dump_data(self):
         return {
@@ -253,8 +279,11 @@ class ActivityNodeModel(object):
     def get_export_nodes(self):
         export = []
         for i,k in enumerate(self.duration_model.element_names_label):
-            node = self.duration_model.get_element[i]
-            export.append((k, node))
+            ids = self.duration_model.get_element(i).export_plot
+            for id in ids:
+                tnode = export_plot_node.get(id)
+                name = '%s-%s' %(k,tnode[0])
+                export.append((name, tnode[1]))
 
         return export
 
@@ -331,7 +360,7 @@ class DurationElement(object):
         self.nodes_name=[]
         self.nodes = []
         self.activity_name = activity_name
-        self.algo_nodes = {}
+        self.export_plot = []
         self.output_node = None         # node dau ra cua element
 
     def get_node_index_by_name(self, name):

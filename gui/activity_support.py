@@ -69,7 +69,7 @@ def cmd_plot():
     sys.stdout.flush()
 
     plot_index = w.cb_plot_node.current()
-    node = w.plot_nodes[plot_index]
+    node = w.plot_nodes_tuple[plot_index][1]
     node.get_histogram()
     node.draw_bar()
     plt.show()
@@ -87,11 +87,12 @@ def init(top, gui, *args, **kwargs):
     # init
     txt_name.set(w.activity_node.name)
 
+    init_plot_list()
 
 def init_plot_list():
-    w.plot_nodes = w.activity_node.get_export_nodes()
-    w.value_list = [k[0] for k in w.plot_nodes]
-    w.cb_plot_node.configure(values=w.value_list)
+    w.plot_nodes_tuple = w.activity_node.get_export_nodes()
+    value_list = [t[0] for t in w.plot_nodes_tuple]
+    w.cb_plot_node.configure(values=value_list)
 
 def destroy_window():
     # Function which closes the window.

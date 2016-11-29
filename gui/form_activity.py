@@ -50,6 +50,7 @@ class Activity:
     orig_activity_node = None
     activity_node = None
     callback_function = None
+    plot_nodes_tuple = ()
 
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
