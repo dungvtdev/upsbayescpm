@@ -28,6 +28,8 @@ def remove_network(name):
         # raise ValueError('Name %s chua define, k xoa duoc' % name)
         del _network[name]
 
+def remove_all_network():
+    _network.clear()
 
 def _get_network():
     return _network[_name]

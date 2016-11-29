@@ -7,6 +7,7 @@ from . import form_risks
 
 from .utils import utils
 from . import model
+import json
 
 windows = {}
 
@@ -64,9 +65,13 @@ class MainApplication(object):
         file_menu.add_command(label='New', accelerator='Ctrl+N',
                               compound='left', image=icon.new_file_icon,
                               underline=0, command=self.new_file)
-        file_menu.add_command(label='New Network', accelerator='Ctrl+Alt+N',
-                              compound='left', image=icon.new_file_icon,
-                              underline=0, command=self.new_network)
+        file_menu.add_command(label='Open', accelerator='Ctrl+O',
+                              compound='left', image=icon.open_file_icon,
+                              underline=0, command=self.open_file)
+        file_menu.add_command(label='Save', accelerator='Ctrl+S',
+                              compound='left', image=icon.save_file_icon,
+                              underline=0, command=self.save_file)
+
         file_menu.add_separator()
         file_menu.add_command(
             label='Exit', accelerator='Alt+F4', command=self.exit_editor)
@@ -148,10 +153,62 @@ class MainApplication(object):
     """ Command """
 
     def new_file(self):
-        pass
+        self.model.new_model()
+        self.canvas.delete("all")
+        utils.draw_checkered(self.canvas, 80)
 
-    def new_network(self):
-        pass
+    def open_file(self):
+        from tkinter import filedialog
+        file_path = filedialog.asksaveasfilename()
+
+        if file_path:
+            with open(file_path, 'r') as infile:
+                json_data = infile.read()
+                data = json.loads(json_data)
+                self.model.read_data(data)
+                self.generate_ui_from_model()
+
+    def save_file(self):
+        for node in self.model.nodes:
+            node.ui_position = self.query_canvas_node_position(node.node_id)
+
+        from tkinter import filedialog
+        file_path = filedialog.asksaveasfilename()
+
+        if file_path:
+            data = self.model.dump_data()
+            with open(file_path, 'w') as outfile:
+                json.dump(data, outfile)
+
+    def generate_ui_from_model(self):
+        saved_node_id={}
+        for node in self.model.nodes:
+            pos = node.ui_position
+            w = self.activity_half_size[0]
+            h = self.activity_half_size[1]
+            id = self.canvas.create_oval(
+                    pos[0] - w, pos[1] - h, pos[0] + w, pos[1] + h,
+                    outline=self.outline, fill=self.activity_fill, width=self.border_width)
+            saved_node_id[node.node_id]=id
+            node.node_id = id
+            # draw text
+            posx = pos[0]
+            posy = pos[1]- h - 10
+            node.text_id = self.canvas.create_text(posx, posy, text=node.name)
+
+        for arc in self.model.arcs:
+            arc.start_id = saved_node_id[arc.start_id]
+            arc.end_id = saved_node_id[arc.end_id]
+
+            start_pos = self.model.get_node(arc.start_id).ui_position
+            end_pos = self.model.get_node(arc.end_id).ui_position
+
+            arc.arc_id, start_pos, end_pos = self.draw_arrow((start_pos[0], start_pos[1]),
+                                        (end_pos[0], end_pos[1]), self.node_half_size[0])
+            arc.start_pos = start_pos
+            arc.end_pos = end_pos
+
+
 
     def exit_editor(self):
         if tkinter.messagebox.askokcancel("Quit?", "Really quit?"):
@@ -440,3 +497,9 @@ class MainApplication(object):
         line_item = self.canvas.create_line(
             start[0], start[1], end[0], end[1], fill=self.line_fill, width=self.line_width, arrow="last")
         return line_item, start, end
+
+    def query_canvas_node_position(self, id):
+        coords = self.canvas.coords(id)
+        posx = (coords[0] + coords[2]) / 2
+        posy = (coords[1] + coords[3]) / 2
+        return [posx, posy]

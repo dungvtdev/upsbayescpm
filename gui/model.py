@@ -7,6 +7,11 @@ class Model(object):
     nodes = []
     arcs = []
 
+    def new_model(self):
+        bayes.remove_all_network()
+        self.nodes = []
+        self.arcs = []
+
     def replace_node(self, node, new_node):
         self.remove_node(node)
         self.add_node(new_node)
@@ -195,11 +200,32 @@ class Model(object):
         duration.algo_nodes['Delay'] = delay_node
         known_risk.output_node = delay_node
 
+    def dump_data(self):
+        return {
+            'Model':{
+                'Activities':[a.dump_data() for a in self.nodes],
+                'Arcs':[arc.dump_data() for arc in self.arcs]
+            }
+        }
+
+    def read_data(self, json_data):
+        activities = json_data['Model']['Activities']
+        arcs = json_data['Model']['Arcs']
+
+        self.nodes = []
+        self.arcs = []
+
+        for a in activities:
+            self.nodes.append(ActivityNodeModel('').read_data(a))
+
+        for arc in arcs:
+            self.arcs.append(ArcModel().read_data(arc))
 
 class ActivityNodeModel(object):
     name = ''
     node_id = None
     text_id = None
+    ui_position = ()
     # (es, ef, ls, lf, duration)
     bayes_nodes = ()
     duration_model = None   # type: DurationNodeModel
@@ -226,6 +252,22 @@ class ActivityNodeModel(object):
 
         return export
 
+    def dump_data(self):
+        return {
+            'name':self.name,
+            'id':self.node_id,
+            'ui_pos':self.ui_position,
+            'duration':self.duration_model.dump_data(),
+        }
+
+    def read_data(self, json_dict):
+        self.name = json_dict['name']
+        self.node_id = int(json_dict['id'])
+        self.ui_position = json_dict['ui_pos']
+        self.duration_model.read_data(json_dict['duration'])
+
+        return self
+
 
 class ArcModel(object):
     start_id = None
@@ -234,6 +276,17 @@ class ArcModel(object):
     start_pos = None
     end_pos = None
 
+    def dump_data(self):
+        return [self.start_id, self.end_id]
+                #, self.start_pos, self.end_pos]
+
+    def read_data(self, ls):
+        self.start_id = ls[0]
+        self.end_id = ls[1]
+        # self.start_pos = ls[2]
+        # self.end_pos = ls[3]
+
+        return self
 
 class DurationNodeModel(object):
     element_names_label=('Knowned Risks',)
@@ -258,6 +311,14 @@ class DurationNodeModel(object):
         id = next(i for i in range(len(self.element_names)) if name == self.element_names[i])
         return self.get_element(id)
 
+    def dump_data(self):
+        return [e.dump_data() for e in self.elements]
+
+    def read_data(self, ls):
+        for i in range(len(ls)):
+            self.elements[i].read_data(ls[i])
+
+
 class DurationElement(object):
     def __init__(self, activity_name):
         self.nodes_name_label = []
@@ -281,6 +342,12 @@ class DurationElement(object):
     def get_node_by_id(self, id):
         return self.nodes[id]
 
+    def dump_data(self):
+        return [node.dump_data() for node in self.nodes]
+
+    def read_data(self, ls):
+        for i in range(len(ls)):
+            self.nodes[i].read_data(ls[i])
 
 class KnownedRiskModel(DurationElement):
     # self.control = None     # Cpd
@@ -323,6 +390,23 @@ class NodeCpdModel(LabeledNodeModel):
         self.choice_index = self.MANUAL
         # self.algo_node = None   # node chay thuat toan
 
+    def format_data(self):
+        data = self.data
+        if data:
+            if isinstance(data[0], list) and len(data[0]) == 1:
+                for i in range(len(data)):
+                    data[i] = data[i][0]
+                tong = sum(data)
+                for i in range(len(data)):
+                    data[i] = data[i] / tong
+            else:
+                for i in range(len(data)):
+                    tong = sum(data[i])
+                    for j in range(len(data[i])):
+                        data[i][j] = data[i][j]/tong
+
+        self.data = data
+
     def can_pre_choice(self):
         return not self.evidences
 
@@ -333,17 +417,20 @@ class NodeCpdModel(LabeledNodeModel):
         else:
             return ['Prob',]
 
-    # def dump_data(self):
-    #     return {'model':'NodeCpdModel',
-    #             'name':self.name,
-    #             'labels':self.labels,
-    #             'evidences':self.evidences,
-    #             'data':self.data,
-    #             'choice_index':self.choice_index
-    #             }
-    #
-    # def read_data(self, json_data):
-    #     self.name=json_data['name']
+    def dump_data(self):
+        self.format_data()
+        return {'model':'NodeCpdModel',
+                'name':self.name,
+                'labels':self.labels,
+                'data':self.data,
+                'choice_index':self.choice_index
+                }
+
+    def read_data(self, json_dict):
+        self.name = json_dict['name']
+        self.labels = json_dict['labels']
+        self.data = json_dict['data']
+        self.choice_index = int(json_dict['choice_index'])
 
 
 
