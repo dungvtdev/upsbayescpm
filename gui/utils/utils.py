@@ -28,16 +28,18 @@ def load_icon():
 
 
 def draw_checkered(canvas, line_distance, fill=None):
+    pass
     # vertical lines at an interval of "line_distance" pixel
-    canvas_width = 1500
-    canvas_height = 1500
-    if not fill:
-        fill = "#DDDDDD"
-    for x in range(line_distance, canvas_width, line_distance):
-        canvas.create_line(x, 0, x, canvas_height, fill=fill, width=0.5)
-    # horizontal lines at an interval of "line_distance" pixel
-    for y in range(line_distance, canvas_height, line_distance):
-        canvas.create_line(0, y, canvas_width, y, fill=fill, width=0.5)
+
+    # canvas_width = 1500
+    # canvas_height = 1500
+    # if not fill:
+    #     fill = "#DDDDDD"
+    # for x in range(line_distance, canvas_width, line_distance):
+    #     canvas.create_line(x, 0, x, canvas_height, fill=fill, width=0.5)
+    # # horizontal lines at an interval of "line_distance" pixel
+    # for y in range(line_distance, canvas_height, line_distance):
+    #     canvas.create_line(0, y, canvas_width, y, fill=fill, width=0.5)
 
 
 def calc_decorate_arrow(start, end, radius):

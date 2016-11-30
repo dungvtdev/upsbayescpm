@@ -49,6 +49,19 @@ def on_choice(nodeCpd, combobox):
     index = NodeCpdModel.MANUAL if index == -1 else index
     nodeCpd.choice_index = index
 
+def on_choice_value(event, node, entry):
+    # print('Choice_value %s' %event.__dict__)
+    try:
+        entry_str = entry.get()
+        # print('Entry str %s' % entry_str)
+        value = float(entry_str)
+        value = node.try_set_choice(value)
+        # if event.keycode == 36:
+        entry.delete(0,'end')
+        entry.insert(0,str(value))
+    except Exception as e:
+        pass
+
 if __name__ == '__main__':
     import risks
     risks.vp_start_gui()

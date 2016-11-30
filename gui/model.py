@@ -333,6 +333,10 @@ class ActivityNodeModel(object):
     bayes_nodes = ()
     duration_model = None   # type: DurationNodeModel
 
+    def set_name(self, name):
+        self.name = name
+        self.duration_model.activity_rename(name)
+
     def copy(self):
         a = ActivityNodeModel(self.name)
         a.node_id = self.node_id
@@ -432,6 +436,10 @@ class DurationNodeModel(object):
         unknown_factor = UnknownFactorModel(activity_name)
         self.elements[2] = unknown_factor
 
+    def activity_rename(self, name):
+        if self.elements:
+            for e in self.elements:
+                e.activity_rename(name)
 
     def get_element_label_index(self, name):
         return next(i for i in range(len(self.element_names_label)) if name == self.element_names_label[i])
@@ -492,6 +500,12 @@ class DurationElement(object):
         self.export_plot = []
         self.output_node = None
 
+    def activity_rename(self, name):
+        if self.nodes:
+            for node in self.nodes:
+                s = node.name.split('-')
+                node.name = '%s-%s' %(name, s[1])
+
 class KnownedRiskModel(DurationElement):
     # self.control = None     # Cpd
     # self.impact = None      # Value
@@ -515,7 +529,6 @@ class KnownedRiskModel(DurationElement):
         impact = self.nodes[1]
         impact.set_labels(['Very Low', 'Low', 'Medium', 'High', 'Very Hide'])
         impact.lock_labels = True
-
 
 class TradeOffModel(DurationElement):
 
@@ -570,6 +583,20 @@ class NodeContinuousInterval(object):
         # raise NotImplementedError()
         return True
 
+    def try_set_choice(self, value):
+        min, max = self.get_bound()
+        if value < min: value = min
+        if value > max: value = max
+        self.choice_value = value
+        return self.choice_value
+
+    def get_bound(self):
+        if self.data:
+            loc = self.get_param('loc')
+            scale = self.get_param('scale')
+            return (loc - 3*scale, loc+3*scale)
+        else:
+            return (0,0)
 
     def get_columns_label(self):
         return ['Values',]

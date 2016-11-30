@@ -4,6 +4,7 @@
 # In conjunction with Tcl version 8.6
 #    Nov 26, 2016 10:09:34 PM
 import sys
+from .model import NodeCpdModel, NodeContinuousInterval
 
 try:
     from Tkinter import *
@@ -69,12 +70,37 @@ class Risks:
         self.Labelframe1.configure(text='''Risks''')
         self.Labelframe1.configure(width=580)
 
-        self.Frame1 = Frame(self.Labelframe1)
-        self.Frame1.place(relx=0.02, rely=0.06, relheight=0.9, relwidth=0.96)
-        self.Frame1.configure(relief=SUNKEN)
-        self.Frame1.configure(borderwidth="2")
-        self.Frame1.configure(relief=SUNKEN)
-        self.Frame1.configure(width=555)
+        # self.Frame1 = Frame(self.Labelframe1)
+        # self.Frame1.place(relx=0.02, rely=0.06, relheight=0.9, relwidth=0.96)
+        # self.Frame1.configure(relief=SUNKEN)
+        # self.Frame1.configure(borderwidth="2")
+        # self.Frame1.configure(relief=SUNKEN)
+        # self.Frame1.configure(width=555)
+
+        canvas = Canvas(self.Labelframe1)
+
+        def onFrameConfigure(canvas):
+            '''Reset the scroll region to encompass the inner frame'''
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        vsb = Scrollbar(self.Labelframe1, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=vsb.set)
+
+        vsb.pack(side="right", fill="y")
+        # canvas.pack(side="left", fill="both", expand=True)
+        canvas.place(relx=0.02, rely=0.06, relheight=0.9, relwidth=0.94)
+        vsb.place(relx=0.96,rely=0.06, relheight=0.9)
+
+        self.Frame1 = Frame(canvas)
+        # self.Frame1.place(relx=0.02, rely=0.06, relheight=0.9, relwidth=0.96)
+        # self.Frame1.configure(relief=SUNKEN)
+        # self.Frame1.configure(borderwidth="2")
+        # self.Frame1.configure(relief=SUNKEN)
+        # self.Frame1.configure(width=555)
+        self.Frame1.bind("<Configure>", lambda event, canvas=canvas: onFrameConfigure(canvas))
+
+        canvas.create_window((4, 4), window=self.Frame1, anchor="nw")
+
 
         self.btn_quit = Button(top)
         self.btn_quit.place(relx=0.83, rely=0.9, height=26, width=87)
@@ -97,25 +123,42 @@ class Risks:
 
 
 
-    def create_choice_ui(self, master, nodeCpd, index):
-        lb = Label(master,text=nodeCpd.name)
-        # lb.configure(width=100)
-        lb.grid(row=index, column=0)
-        lb.configure(anchor='e')
+    def create_choice_ui(self, master, node, index):
+        if isinstance(node, NodeCpdModel):
+            nodeCpd = node
+            lb = Label(master,text=nodeCpd.name)
+            # lb.configure(width=100)
+            lb.grid(row=index, column=0)
+            lb.configure(anchor='nw',justify=LEFT)
 
-        labels = [l for l in nodeCpd.labels]
-        labels.append('manual')
+            labels = [l for l in nodeCpd.labels]
+            labels.append('manual')
 
-        combobox = ttk.Combobox(master)
-        combobox.grid(row=index, column=1)
-        combobox.configure(values=labels)
-        # combobox.configure(width=220)
-        combobox.bind("<<ComboboxSelected>>",
-                      lambda event: risks_support.on_choice(nodeCpd, combobox))
-        if nodeCpd.choice_index == nodeCpd.MANUAL:
-            combobox.set('manual')
+            combobox = ttk.Combobox(master)
+            combobox.grid(row=index, column=1)
+            combobox.configure(values=labels)
+            # combobox.configure(width=220)
+            combobox.bind("<<ComboboxSelected>>",
+                          lambda event: risks_support.on_choice(nodeCpd, combobox))
+            if nodeCpd.choice_index == nodeCpd.MANUAL:
+                combobox.set('manual')
+            else:
+                combobox.set(nodeCpd.labels[nodeCpd.choice_index])
         else:
-            combobox.set(nodeCpd.labels[nodeCpd.choice_index])
+            min, max = node.get_bound()
+            name = '%s :(%d : %d)' %(node.name, min, max)
+            lb = Label(master, text=name)
+            # lb.configure(width=100)
+            lb.grid(row=index, column=0)
+            lb.configure(anchor='nw', justify=LEFT)
+
+            entry = Entry(master)
+            entry.grid(row=index, column=1)
+            # entry.configure(text=str(node.choice_value))
+            # entry.configure(anchor='ne')
+            # print('create_choice_ui')
+            entry.insert(0,str(node.choice_value))
+            entry.bind('<Return>', lambda event: risks_support.on_choice_value(event, node, entry))
 
 
 if __name__ == '__main__':

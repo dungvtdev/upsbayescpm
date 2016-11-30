@@ -52,7 +52,7 @@ def cmd_help():
 def cmd_ok():
     print('activity_support.cmd_ok')
     sys.stdout.flush()
-    w.activity_node.name = txt_name.get()
+    w.activity_node.set_name(txt_name.get())
     w.callback_function(w.orig_activity_node, w.activity_node)
 
 
