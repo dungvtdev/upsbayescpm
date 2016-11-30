@@ -146,7 +146,7 @@ class Risks:
                 combobox.set(nodeCpd.labels[nodeCpd.choice_index])
         else:
             min, max = node.get_bound()
-            name = '%s :(%d : %d)' %(node.name, min, max)
+            name = '%s :(%.2f : %.2f)' %(node.name, min, max)
             lb = Label(master, text=name)
             # lb.configure(width=100)
             lb.grid(row=index, column=0)

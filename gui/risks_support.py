@@ -53,10 +53,13 @@ def on_choice_value(event, node, entry):
     # print('Choice_value %s' %event.__dict__)
     try:
         entry_str = entry.get()
-        # print('Entry str %s' % entry_str)
-        value = float(entry_str)
-        value = node.try_set_choice(value)
-        # if event.keycode == 36:
+        if not entry_str:
+            value = node.try_set_choice(None)
+        else:
+            # print('Entry str %s' % entry_str)
+            value = float(entry_str)
+            value = node.try_set_choice(value)
+            # if event.keycode == 36:
         entry.delete(0,'end')
         entry.insert(0,str(value))
     except Exception as e:

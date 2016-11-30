@@ -220,18 +220,25 @@ class Model(object):
         step = 1.0 / (len(response_data))
         response_real_values = [step * (i+1) for i in range(len(response_data))[::-1]]  # tu 1..>0
 
-        impact_risk_values=[]
-        impact_risk_prob =[]
-        impact_prob = impact_data
-        risk_prob=risk_event_values
-        for i in range(len(impact_prob)):
-            for j in range(len(risk_prob)):
-                impact_risk_prob.append(impact_prob[i]*risk_prob[j])
-                impact_risk_values.append(impact_real_values[i]*risk_event_real_values[j])
-
         n = NumberOfSample
-        impact_risk_samples = ProbTable(impact_risk_prob, impact_risk_values).generate(n)
+
         response_samples = ProbTable(response_data, range(len(response_data))).generate(n)
+
+        if impact.choice_index < 0:
+            impact_risk_values=[]
+            impact_risk_prob =[]
+            impact_prob = impact_data
+            risk_prob=risk_event_values
+            for i in range(len(impact_prob)):
+                for j in range(len(risk_prob)):
+                    impact_risk_prob.append(impact_prob[i]*risk_prob[j])
+                    impact_risk_values.append(impact_real_values[i]*risk_event_real_values[j])
+
+            impact_risk_samples = ProbTable(impact_risk_prob, impact_risk_values).generate(n)
+        else:
+            impact_real = impact_real_values[impact.choice_index]
+            values = [impact_real*risk_event_real_values[i] for i in range(len(risk_event_values))]
+            impact_risk_samples = ProbTable(risk_event_values, values).generate(n)
 
         delay = [None]*n
 
@@ -255,9 +262,16 @@ class Model(object):
         resources = trade_off.get_node('resources')
         initial_estimate = trade_off.get_node('initial_estimate')
 
-        resources_probs= resources.get_pre_calc_data()
-        resources_samples = ProbTable(resources_probs, range(len(resources_probs))).generate(n)
-        ie_samples = Normal(initial_estimate.get_param('loc'),
+        if resources.choice_index is not None:
+            resources_samples = [resources.choice_index]*n
+        else:
+            resources_probs= resources.get_pre_calc_data()
+            resources_samples = ProbTable(resources_probs, range(len(resources_probs))).generate(n)
+
+        if initial_estimate.choice_value is not None:
+            ie_samples = [initial_estimate.choice_value] * n
+        else:
+            ie_samples = Normal(initial_estimate.get_param('loc'),
                                   initial_estimate.get_param('scale')).generate(n)
 
         samples =[0] * n
@@ -281,7 +295,10 @@ class Model(object):
     def build_unknown_factor(self, duration, unknown_factor):
         from scipy.stats import truncnorm
         adjust = unknown_factor.get_node('adjustment_factor')
-        samples = truncnorm.rvs(0,1,
+        if not adjust.choice_value is None:
+            samples = [adjust.choice_value] * NumberOfSample
+        else:
+            samples = truncnorm.rvs(0,1,
                                   loc=adjust.get_param('loc'),
                                   scale=adjust.get_param('scale'),
                                   size = NumberOfSample)
@@ -584,10 +601,13 @@ class NodeContinuousInterval(object):
         return True
 
     def try_set_choice(self, value):
-        min, max = self.get_bound()
-        if value < min: value = min
-        if value > max: value = max
-        self.choice_value = value
+        if value is None:
+            self.choice_value = None
+        else:
+            min, max = self.get_bound()
+            if value < min: value = min
+            if value > max: value = max
+            self.choice_value = value
         return self.choice_value
 
     def get_bound(self):

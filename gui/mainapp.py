@@ -51,6 +51,8 @@ class MainApplication(object):
 
         self.new_file()
 
+        self.current_item = None
+
     def create_gui(self):
         self.create_menu()
         self.create_bottom_bar()
@@ -370,15 +372,16 @@ class MainApplication(object):
         return pos
 
     def delete_tool(self, state):
-        current = self.get_current_node()
-        if not current:
-            return
         if state == 0:
+            current = self.get_current_node()
+            if not current:
+                return
             self.selecting_item = current
             self.draw_choosen()
             if tkinter.messagebox.askokcancel("Delete?", "Really delete?"):
                 # self.canvas.delete(current)
-                self.delete_node_ui(current)
+                cnode = self.model.get_node(current)
+                self.delete_node_ui(cnode)
                 self.canvas.delete(self.choose_view)
                 # delete model
                 self.model.remove_node(self.model.get_node(current))
@@ -387,6 +390,42 @@ class MainApplication(object):
                     for a in arcs:
                         self.canvas.delete(a.arc_id)
                         self.model.remove_arc(a)
+        if state == 1:
+            if self.current_item:
+                self.canvas.delete(self.current_item)
+
+            id = self.canvas.create_line(
+                self.start_x, self.start_y, self.end_x, self.end_y, fill=self.line_fill,
+                width=self.line_width)
+
+            self.current_item = id
+
+        if state == 2: # release
+            if self.current_item:
+                self.canvas.delete(self.current_item)
+
+            sx, sy = self.start_x, self.start_y
+            ex, ey = self.end_x, self.end_y
+
+            print("Remove arc")
+
+            rm = []
+            for arc in self.model.arcs:
+                if self.check_line_segment_crossing((sx, sy, ex, ey), (arc.start_pos[0], arc.start_pos[1], arc.end_pos[0], arc.end_pos[1])):
+                    rm.append(arc)
+            for r in rm:
+                self.model.remove_arc(r)
+                self.canvas.delete(r.arc_id)
+
+    def check_line_segment_crossing(self, line1_tuple, line2_tuple):
+        px, py, qx, qy = line1_tuple
+        ex, ey, fx, fy = line2_tuple
+
+        c1 = (fx - ex)*(py-fy) - (fy-ey)*(px-fx)
+        c2 = (fx-ex)*(qy-fy) - (fy-ey)*(qx-fx)
+
+        return c1*c2 < 0
+
 
     def create_arc_tool(self, state):
         # print("Draw arc")

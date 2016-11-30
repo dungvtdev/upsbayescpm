@@ -2,6 +2,7 @@ from pgmpy.models import BayesianModel
 from pgmpy.factors.discrete.CPD import TabularCPD
 from pgmpy.inference import VariableElimination
 import numpy as np
+from scipy.stats import truncnorm
 
 def update(nodes):
     # tim node khong co predecessor
@@ -64,6 +65,12 @@ def generate_tnormal(mean, var, nmin, nmax):
     if rnd < nmin: rnd=nmin
     if rnd > nmax: rnd=nmax
     return rnd
+
+    # samples = truncnorm.rvs(nmin, nmax,
+    #                         loc=mean,
+    #                         scale=var,
+    #                         size=1)
+    # return samples[0]
 
 
 class ProbTable(object):
