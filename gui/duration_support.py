@@ -129,6 +129,7 @@ def on_lst_risks_select(event):
         w.lst_nodes.insert(END, s)
     w.lst_nodes.select_set(0,0)
     w.lst_risks_cur_select = str_select
+    w.lst_nodes_cur_select = 0
     redraw_data()
 
 def on_lst_nodes_select(event):

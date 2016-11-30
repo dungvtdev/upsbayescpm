@@ -137,7 +137,7 @@ class Duration_Model:
 
         # frame content
         self.lb_type = Label(top)
-        self.lb_type.place(relx=0.26, rely=0.07, height=18, width=536)
+        self.lb_type.place(relx=0.28, rely=0.07, height=18, width=536)
         self.lb_type.configure(anchor=NW)
         self.lb_type.configure(justify=LEFT)
         self.lb_type.configure(text='''Type: adlfad''')
@@ -145,8 +145,8 @@ class Duration_Model:
 
         # CPD
         self.frm_cpd_content = Frame(top)
-        self.frm_cpd_content.place(relx=0.25, rely=0.13, relheight=0.78
-                                   , relwidth=0.74)
+        self.frm_cpd_content.place(relx=0.28, rely=0.13, relheight=0.78
+                                   , relwidth=0.72)
         self.frm_cpd_content.configure(relief=GROOVE)
         self.frm_cpd_content.configure(borderwidth="2")
         self.frm_cpd_content.configure(relief=GROOVE)
@@ -197,8 +197,8 @@ class Duration_Model:
 
         # Distribution
         self.frm_distribution = Frame(top)
-        self.frm_distribution.place(relx=0.25, rely=0.13, relheight=0.78
-                                    , relwidth=0.74)
+        self.frm_distribution.place(relx=0.28, rely=0.13, relheight=0.78
+                                    , relwidth=0.72)
         self.frm_distribution.configure(relief=GROOVE)
         self.frm_distribution.configure(borderwidth="2")
         self.frm_distribution.configure(relief=GROOVE)

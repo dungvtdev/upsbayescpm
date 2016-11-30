@@ -1,0 +1,324 @@
+{
+	"Model": {
+		"Activities": [{
+			"duration": [
+				[{
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"choice_index": -1,
+					"name": "A-control",
+					"model": "NodeCpdModel",
+					"labels": ["co", "khong"]
+				}, {
+					"data": [
+						[0.1],
+						[0.2],
+						[0.3],
+						[0.3],
+						[0.2]
+					],
+					"choice_index": -1,
+					"name": "A-impact",
+					"model": "NodeCpdModel",
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"]
+				}, {
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"choice_index": -1,
+					"name": "A-risk_event",
+					"model": "NodeCpdModel",
+					"labels": ["true", "false"]
+				}, {
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"choice_index": -1,
+					"name": "A-response",
+					"model": "NodeCpdModel",
+					"labels": ["dk", "kdk"]
+				}],
+				[{
+					"data": [
+						[0.2],
+						[0.1],
+						[0.3],
+						[0.25],
+						[0.25]
+					],
+					"choice_index": 1,
+					"name": "A-resources",
+					"model": "NodeCpdModel",
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"]
+				}, {
+					"data": [
+						[10.0],
+						[1.0]
+					],
+					"choice_value": 7.0,
+					"name": "A-initial_estimate",
+					"model": "NodeContinuousInterval",
+					"type_string": "normal"
+				}],
+				[{
+					"data": [
+						[1.1],
+						[0.1]
+					],
+					"choice_value": null,
+					"name": "A-adjustment_factor",
+					"model": "NodeContinuousInterval",
+					"type_string": "tnormal01"
+				}]
+			],
+			"ui_pos": [107.0, 62.0],
+			"name": "A",
+			"id": 413
+		}, {
+			"duration": [
+				[{
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"choice_index": -1,
+					"name": "B-control",
+					"model": "NodeCpdModel",
+					"labels": ["co", "khong"]
+				}, {
+					"data": [
+						[0.1],
+						[0.2],
+						[0.3],
+						[0.3],
+						[0.2]
+					],
+					"choice_index": -1,
+					"name": "B-impact",
+					"model": "NodeCpdModel",
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"]
+				}, {
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"choice_index": -1,
+					"name": "B-risk_event",
+					"model": "NodeCpdModel",
+					"labels": ["true", "false"]
+				}, {
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"choice_index": -1,
+					"name": "B-response",
+					"model": "NodeCpdModel",
+					"labels": ["dk", "kdk"]
+				}],
+				[{
+					"data": [
+						[0.2],
+						[0.1],
+						[0.3],
+						[0.25],
+						[0.25]
+					],
+					"choice_index": -1,
+					"name": "B-resources",
+					"model": "NodeCpdModel",
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"]
+				}, {
+					"data": [
+						[15.0],
+						[1.0]
+					],
+					"choice_value": null,
+					"name": "B-initial_estimate",
+					"model": "NodeContinuousInterval",
+					"type_string": "normal"
+				}],
+				[{
+					"data": [
+						[1.1],
+						[0.1]
+					],
+					"choice_value": null,
+					"name": "B-adjustment_factor",
+					"model": "NodeContinuousInterval",
+					"type_string": "tnormal01"
+				}]
+			],
+			"ui_pos": [110.0, 279.0],
+			"name": "B",
+			"id": 415
+		}, {
+			"duration": [
+				[{
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"choice_index": -1,
+					"name": "C-control",
+					"model": "NodeCpdModel",
+					"labels": ["co", "khong"]
+				}, {
+					"data": [
+						[0.1],
+						[0.2],
+						[0.3],
+						[0.3],
+						[0.2]
+					],
+					"choice_index": -1,
+					"name": "C-impact",
+					"model": "NodeCpdModel",
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"]
+				}, {
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"choice_index": -1,
+					"name": "C-risk_event",
+					"model": "NodeCpdModel",
+					"labels": ["true", "false"]
+				}, {
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"choice_index": -1,
+					"name": "C-response",
+					"model": "NodeCpdModel",
+					"labels": ["dk", "kdk"]
+				}],
+				[{
+					"data": [
+						[0.2],
+						[0.1],
+						[0.3],
+						[0.25],
+						[0.25]
+					],
+					"choice_index": -1,
+					"name": "C-resources",
+					"model": "NodeCpdModel",
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"]
+				}, {
+					"data": [
+						[20.0],
+						[1.0]
+					],
+					"choice_value": null,
+					"name": "C-initial_estimate",
+					"model": "NodeContinuousInterval",
+					"type_string": "normal"
+				}],
+				[{
+					"data": [
+						[1.1],
+						[0.1]
+					],
+					"choice_value": null,
+					"name": "C-adjustment_factor",
+					"model": "NodeContinuousInterval",
+					"type_string": "tnormal01"
+				}]
+			],
+			"ui_pos": [309.0, 199.0],
+			"name": "C",
+			"id": 417
+		}, {
+			"duration": [
+				[{
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"choice_index": -1,
+					"name": "E-control",
+					"model": "NodeCpdModel",
+					"labels": ["co", "khong"]
+				}, {
+					"data": [
+						[0.1],
+						[0.2],
+						[0.3],
+						[0.3],
+						[0.2]
+					],
+					"choice_index": -1,
+					"name": "E-impact",
+					"model": "NodeCpdModel",
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"]
+				}, {
+					"data": [
+						[0.2, 0.6],
+						[0.8, 0.4]
+					],
+					"choice_index": -1,
+					"name": "E-risk_event",
+					"model": "NodeCpdModel",
+					"labels": ["true", "false"]
+				}, {
+					"data": [
+						[0.6],
+						[0.4]
+					],
+					"choice_index": -1,
+					"name": "E-response",
+					"model": "NodeCpdModel",
+					"labels": ["dk", "kdk"]
+				}],
+				[{
+					"data": [
+						[0.2],
+						[0.1],
+						[0.3],
+						[0.25],
+						[0.25]
+					],
+					"choice_index": 1,
+					"name": "E-resources",
+					"model": "NodeCpdModel",
+					"labels": ["Very Low", "Low", "Medium", "High", "Very Hide"]
+				}, {
+					"data": [
+						[12.0],
+						[1.0]
+					],
+					"choice_value": 7.0,
+					"name": "E-initial_estimate",
+					"model": "NodeContinuousInterval",
+					"type_string": "normal"
+				}],
+				[{
+					"data": [
+						[1.1],
+						[0.1]
+					],
+					"choice_value": null,
+					"name": "E-adjustment_factor",
+					"model": "NodeContinuousInterval",
+					"type_string": "tnormal01"
+				}]
+			],
+			"ui_pos": [288.0, 394.0],
+			"name": "E",
+			"id": 419
+		}],
+		"Arcs": [
+			[413, 417],
+			[413, 415],
+			[415, 417],
+			[415, 419],
+			[417, 419]
+		]
+	}
+}
