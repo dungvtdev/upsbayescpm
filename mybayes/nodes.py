@@ -71,6 +71,7 @@ class Node(CacheMixin):
                 self.successors.append(node)
                 node.add_predecessor([self, ])
 
+
     def add_predecessor(self, nodes):
         for node in nodes:
             if node not in self.predecessor:
@@ -159,6 +160,7 @@ class TableNode(Node):
         prob = ProbTable(self.values, range(len(self.values)))
         return prob.generate(number)
 
+
 class TempNode(Node):
 
     def __init__(self, **kargv):
@@ -198,10 +200,11 @@ class MaxAddValueNode(Node):
         self.add_value = value
 
     def get_samples(self, number=None):
-        if not self.successors:
-            return []
-
         n = settings.NumberOfSample
+
+        if not self.successors:
+            return [self.add_value]*n
+
         # if not number:
         #     n = settings.NumberOfSample
         # else:
@@ -219,6 +222,22 @@ class MaxAddValueNode(Node):
                 value = succ_samples[j][i]
                 max_v = value if value > max_v else max_v
             samples[i] = max_v + self.add_value
+        return samples
+
+
+class MoreThanNode(Node):
+    def __init__(self, **kargv):
+        super(MoreThanNode, self).__init__(**kargv)
+        self.lf_node = kargv['lf_node']
+        self.ef_node = kargv['ef_node']
+
+    def get_samples(self, number=None):
+        n = settings.NumberOfSample
+        lf_samples = self.lf_node.get_samples_cache()
+        ef_samples = self.ef_node.get_samples_cache()
+        samples = [0] * n
+        for i in range(n):
+            samples[i] = 1 if (lf_samples[i] <= ef_samples[i]) else 0
         return samples
 
 

@@ -105,8 +105,8 @@ class Model(object):
                 node = self.get_node(end_node_id)
                 ef = node.get_bayes_node('ef')
                 lf = node.get_bayes_node('lf')
-                lf.add_successors(ef)
-                lf.set_add_value(0)
+                # lf.add_successors(ef)
+                lf.set_add_value(70)
                 # lf.set_weight([1, ])
             for start_node_id in start_set:
                 node = self.get_node(start_node_id)
@@ -161,7 +161,9 @@ class Model(object):
         ls = bayes.nfact.Equation(lf, duration)  # 10
         ls.set_weight([1, -1])
 
-        node.bayes_nodes = (es, ef, ls, lf, duration)
+        critical = bayes.nfact.MoreThanNode(lf_node=lf, ef_node=ef)
+
+        node.bayes_nodes = (es, ef, ls, lf, critical, duration)
 
     def build_duration(self, activity):
         duration = activity.duration_model
@@ -368,7 +370,7 @@ class ActivityNodeModel(object):
         self.duration_model = DurationNodeModel(name)
 
     def get_bayes_node(self, name):
-        m = ('es', 'ef', 'ls', 'lf', 'duration')
+        m = ('es', 'ef', 'ls', 'lf', 'critical', 'duration')
         for i, v in enumerate(m):
             if v == name:
                 break
@@ -385,7 +387,7 @@ class ActivityNodeModel(object):
                 tnode = export_plot_node.get(id)
                 name = '%s-%s' %(k,tnode[0])
                 export.append((name, tnode[1]))
-        ms = ('es', 'ef', 'ls', 'lf', 'duration')
+        ms = ('es', 'ef', 'ls', 'lf', 'critical', 'duration')
         if self.bayes_nodes:
             for m in ms:
                 node = self.get_bayes_node(m)
