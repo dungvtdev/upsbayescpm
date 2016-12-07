@@ -168,7 +168,7 @@ class MainApplication(object):
         import sys, os
         path = os.path.dirname(os.path.realpath(__file__))
         path = os.path.join(path,'../net1.txt')
-        file_path = filedialog.asksaveasfilename()
+        file_path = filedialog.askopenfilename()
 
         if file_path:
             with open(file_path, 'r') as infile:

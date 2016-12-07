@@ -123,11 +123,11 @@ class Duration_Model:
         self.btn_ok.configure(command=duration_support.cmd_ok)
         self.btn_ok.configure(text='''OK''')
 
-        self.btn_help = Button(top)
-        self.btn_help.place(relx=0.01, rely=0.93, height=26, width=67)
-        self.btn_help.configure(activebackground="#d9d9d9")
-        self.btn_help.configure(command=duration_support.cmd_help)
-        self.btn_help.configure(text='''Help''')
+        # self.btn_help = Button(top)
+        # self.btn_help.place(relx=0.01, rely=0.93, height=26, width=67)
+        # self.btn_help.configure(activebackground="#d9d9d9")
+        # self.btn_help.configure(command=duration_support.cmd_help)
+        # self.btn_help.configure(text='''Help''')
 
         self.msg_notif = Message(top)
         self.msg_notif.place(relx=0.1, rely=0.84, relheight=0.04, relwidth=0.49)

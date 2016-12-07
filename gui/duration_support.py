@@ -190,7 +190,10 @@ def switch_tab(index):
     for i in range(len(tabs)):
         if i!=index:
             tabs[i].place_forget()
-    tabs[index].place(tabs[index].pi)
+    try:
+        tabs[index].place(tabs[index].pi)
+    except Exception:
+        pass
 
 def get_current_node():
     element = w.duration_model.get_element(w.duration_model.get_element_label_index(w.lst_risks_cur_select))

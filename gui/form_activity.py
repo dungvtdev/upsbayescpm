@@ -144,11 +144,11 @@ class Activity:
         self.btn_cancel.configure(command=activity_support.cmd_cancel)
         self.btn_cancel.configure(text='''Cancel''')
 
-        self.btn_help = Button(top)
-        self.btn_help.place(relx=0.04, rely=0.89, height=26, width=67)
-        self.btn_help.configure(activebackground="#d9d9d9")
-        self.btn_help.configure(command=activity_support.cmd_help)
-        self.btn_help.configure(text='''Help''')
+        # self.btn_help = Button(top)
+        # self.btn_help.place(relx=0.04, rely=0.89, height=26, width=67)
+        # self.btn_help.configure(activebackground="#d9d9d9")
+        # self.btn_help.configure(command=activity_support.cmd_help)
+        # self.btn_help.configure(text='''Help''')
 
         self.menubar = Menu(top,bg=self._bgcolor,fg=self._fgcolor)
         top.configure(menu = self.menubar)
