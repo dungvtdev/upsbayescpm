@@ -57,7 +57,7 @@ class MainApplication(object):
         self.create_menu()
         self.create_bottom_bar()
         self.create_top_bar()
-        self.create_side_panel()
+        # self.create_side_panel()
         self.create_canvas()
         self.bind_menu_accelrator_keys()
 
@@ -187,7 +187,7 @@ class MainApplication(object):
         if file_path:
             data = self.model.dump_data()
             with open(file_path, 'w') as outfile:
-                json.dump(data, outfile)
+                json.dump(data, outfile, indent=4)
 
     def generate_ui_from_model(self):
         saved_node_id={}
