@@ -105,8 +105,8 @@ class Model(object):
                 node = self.get_node(end_node_id)
                 ef = node.get_bayes_node('ef')
                 lf = node.get_bayes_node('lf')
-                # lf.add_successors(ef)
-                lf.set_add_value(70)
+                lf.add_successors(ef)
+                lf.set_add_value(0)
                 # lf.set_weight([1, ])
             for start_node_id in start_set:
                 node = self.get_node(start_node_id)
