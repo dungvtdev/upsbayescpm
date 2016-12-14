@@ -390,6 +390,8 @@ class ActivityNodeModel(object):
         ms = ('es', 'ef', 'ls', 'lf', 'critical', 'duration')
         if self.bayes_nodes:
             for m in ms:
+                if m == 'critical': 
+                    continue
                 node = self.get_bayes_node(m)
                 export.append((m,node))
         return export

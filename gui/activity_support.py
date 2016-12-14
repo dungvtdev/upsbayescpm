@@ -92,6 +92,7 @@ def init(top, gui, *args, **kwargs):
 def init_plot_list():
     w.plot_nodes_tuple = w.activity_node.get_export_nodes()
     value_list = [t[0] for t in w.plot_nodes_tuple]
+    # value_list = value_list[:4] + value_list[5:]
     w.cb_plot_node.configure(values=value_list)
 
 def destroy_window():

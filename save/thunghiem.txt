@@ -1,0 +1,807 @@
+{
+    "Model": {
+        "Activities": [
+            {
+                "id": 1,
+                "duration": [
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.6
+                                ],
+                                [
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "A-control",
+                            "labels": [
+                                "co",
+                                "khong"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.1
+                                ],
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.2
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "A-impact",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2,
+                                    0.6
+                                ],
+                                [
+                                    0.8,
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "A-risk_event",
+                            "labels": [
+                                "true",
+                                "false"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.6
+                                ],
+                                [
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "A-response",
+                            "labels": [
+                                "dk",
+                                "kdk"
+                            ]
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.1
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.25
+                                ],
+                                [
+                                    0.25
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "A-resources",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "normal",
+                            "data": [
+                                [
+                                    10.0
+                                ],
+                                [
+                                    1.0
+                                ]
+                            ],
+                            "name": "A-initial_estimate"
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "tnormal01",
+                            "data": [
+                                [
+                                    1.1
+                                ],
+                                [
+                                    0.1
+                                ]
+                            ],
+                            "name": "A-adjustment_factor"
+                        }
+                    ]
+                ],
+                "name": "A",
+                "ui_pos": [
+                    166.0,
+                    51.0
+                ]
+            },
+            {
+                "id": 3,
+                "duration": [
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.6
+                                ],
+                                [
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "B-control",
+                            "labels": [
+                                "co",
+                                "khong"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.1
+                                ],
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.2
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "B-impact",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2,
+                                    0.6
+                                ],
+                                [
+                                    0.8,
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "B-risk_event",
+                            "labels": [
+                                "true",
+                                "false"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.6
+                                ],
+                                [
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "B-response",
+                            "labels": [
+                                "dk",
+                                "kdk"
+                            ]
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.1
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.25
+                                ],
+                                [
+                                    0.25
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "B-resources",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "normal",
+                            "data": [
+                                [
+                                    15.0
+                                ],
+                                [
+                                    1.0
+                                ]
+                            ],
+                            "name": "B-initial_estimate"
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "tnormal01",
+                            "data": [
+                                [
+                                    1.1
+                                ],
+                                [
+                                    0.1
+                                ]
+                            ],
+                            "name": "B-adjustment_factor"
+                        }
+                    ]
+                ],
+                "name": "B",
+                "ui_pos": [
+                    88.0,
+                    178.0
+                ]
+            },
+            {
+                "id": 5,
+                "duration": [
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.6
+                                ],
+                                [
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "E-control",
+                            "labels": [
+                                "co",
+                                "khong"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.1
+                                ],
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.2
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "E-impact",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2,
+                                    0.6
+                                ],
+                                [
+                                    0.8,
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "E-risk_event",
+                            "labels": [
+                                "true",
+                                "false"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.6
+                                ],
+                                [
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "E-response",
+                            "labels": [
+                                "dk",
+                                "kdk"
+                            ]
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.1
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.25
+                                ],
+                                [
+                                    0.25
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "E-resources",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "normal",
+                            "data": [
+                                [
+                                    12.0
+                                ],
+                                [
+                                    1.0
+                                ]
+                            ],
+                            "name": "E-initial_estimate"
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "tnormal01",
+                            "data": [
+                                [
+                                    1.1
+                                ],
+                                [
+                                    0.1
+                                ]
+                            ],
+                            "name": "E-adjustment_factor"
+                        }
+                    ]
+                ],
+                "name": "E",
+                "ui_pos": [
+                    318.0,
+                    425.0
+                ]
+            },
+            {
+                "id": 9,
+                "duration": [
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.6
+                                ],
+                                [
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "C-control",
+                            "labels": [
+                                "no_control",
+                                "better_salary"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.1
+                                ],
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.2
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "C-impact",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2,
+                                    0.1
+                                ],
+                                [
+                                    0.8,
+                                    0.9
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "C-risk_event",
+                            "labels": [
+                                "key_staff_leave",
+                                "all_key_staff_stay"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.6
+                                ],
+                                [
+                                    0.25
+                                ],
+                                [
+                                    0.15
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "C-response",
+                            "labels": [
+                                "doing_nothing",
+                                "Rellocating_the_job",
+                                "Hiring_new_staff"
+                            ]
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.1
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.25
+                                ],
+                                [
+                                    0.25
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "C-resources",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "normal",
+                            "data": [
+                                [
+                                    20.0
+                                ],
+                                [
+                                    1.0
+                                ]
+                            ],
+                            "name": "C-initial_estimate"
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "tnormal01",
+                            "data": [
+                                [
+                                    1.2
+                                ],
+                                [
+                                    0.1
+                                ]
+                            ],
+                            "name": "C-adjustment_factor"
+                        }
+                    ]
+                ],
+                "name": "C",
+                "ui_pos": [
+                    346.0,
+                    197.0
+                ]
+            },
+            {
+                "id": 7,
+                "duration": [
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.7
+                                ],
+                                [
+                                    0.3
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "D-control",
+                            "labels": [
+                                "co",
+                                "khong"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.15
+                                ],
+                                [
+                                    0.15
+                                ],
+                                [
+                                    0.4
+                                ],
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.2
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "D-impact",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2,
+                                    0.6
+                                ],
+                                [
+                                    0.8,
+                                    0.4
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "D-risk_event",
+                            "labels": [
+                                "true",
+                                "false"
+                            ]
+                        },
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.8
+                                ],
+                                [
+                                    0.2
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "D-response",
+                            "labels": [
+                                "dk",
+                                "kdk"
+                            ]
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeCpdModel",
+                            "data": [
+                                [
+                                    0.2
+                                ],
+                                [
+                                    0.1
+                                ],
+                                [
+                                    0.3
+                                ],
+                                [
+                                    0.25
+                                ],
+                                [
+                                    0.25
+                                ]
+                            ],
+                            "choice_index": -1,
+                            "name": "D-resources",
+                            "labels": [
+                                "Very Low",
+                                "Low",
+                                "Medium",
+                                "High",
+                                "Very Hide"
+                            ]
+                        },
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "normal",
+                            "data": [
+                                [
+                                    18.0
+                                ],
+                                [
+                                    1.0
+                                ]
+                            ],
+                            "name": "D-initial_estimate"
+                        }
+                    ],
+                    [
+                        {
+                            "model": "NodeContinuousInterval",
+                            "choice_value": null,
+                            "type_string": "tnormal01",
+                            "data": [
+                                [
+                                    1.1
+                                ],
+                                [
+                                    0.1
+                                ]
+                            ],
+                            "name": "D-adjustment_factor"
+                        }
+                    ]
+                ],
+                "name": "D",
+                "ui_pos": [
+                    109.0,
+                    334.0
+                ]
+            }
+        ],
+        "Arcs": [
+            [
+                1,
+                9
+            ],
+            [
+                9,
+                5
+            ],
+            [
+                1,
+                3
+            ],
+            [
+                3,
+                7
+            ],
+            [
+                7,
+                5
+            ]
+        ]
+    }
+}
